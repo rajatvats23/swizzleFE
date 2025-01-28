@@ -1,80 +1,111 @@
-.drawer {
-    background-color: whitesmoke;
-    max-width: fit-content;
-    border-radius: 0 !important;
-}
+// Variables
+$background-color: whitesmoke;
+$shadow-color: rgba(0, 0, 0, 0.611);
+$active-bg-color: rgba(0, 0, 0, 0.1);
 
+// Container styles
 .example-container {
-    height: 100vh;
+  height: 100vh;
 }
 
+// Drawer styles
+.drawer {
+  background-color: $background-color;
+  max-width: fit-content;
+  border-radius: 0 !important;
+  padding: 10px 10px !important;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.header-actions {
+  margin-right: 15px;
+}
+
+// Content area styles
 .drawer-content {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .main-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
 }
 
-.menu {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-}
-
-.spacer {
-    flex: 1 1 auto;
-}
-
-.active {
-    background-color: rgba(0,0,0,0.1);
-    color: primary;
-}
-
+// Header styles
 .header {
-    background-color: whitesmoke !important;
+  background-color: $background-color !important;
+  box-shadow: 0px 1px 3px 2px rgba(0, 0, 0, 0.05);
+}
+
+// Utility classes
+.spacer {
+  flex: 1 1 auto;
 }
 
 .flex-horz {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
-/* Bottom Navigation Styles */
+.menu {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+// Active state styles
+.active {
+  background-color: $active-bg-color;
+  color: var(--mat-primary-color);
+}
+
+// Bottom Navigation
 .bottom-nav {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    background-color: whitesmoke;
-    padding: 8px 0;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  background-color: $background-color;
+  padding: 8px 0;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  box-shadow: 0 -2px 5px $shadow-color;
+  z-index: 1000;
 }
 
 .bottom-nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    color: inherit;
-    padding: 4px 0;
-    min-width: 64px;
-}
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  padding: 4px 0;
+  min-width: 64px;
+  transition: color 0.2s ease;
 
-.bottom-nav-item.active {
-    color: primary;
+  &.active {
+    color: var(--mat-primary-color);
+  }
 }
 
 .bottom-nav-label {
-    font-size: 12px;
-    margin-top: 4px;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+// Media queries for responsive design
+@media screen and (max-width: 599px) {
+  .bottom-nav {
+    height: 56px;
+  }
+
+  .main-content {
+    padding-bottom: 76px; // Account for bottom nav
+  }
 }

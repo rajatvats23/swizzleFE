@@ -1,6 +1,7 @@
 <mat-drawer-container class="example-container">
     <mat-drawer #drawer [mode]="isHandset() ? 'over' : 'side'" class="drawer" opened>
-      <img src="" alt="">
+      <div class="logo-container">
+      </div>
       <mat-nav-list>
         @for (item of navItems(); track item.route) {
         <mat-list-item [routerLink]="item.route" routerLinkActive="active">
@@ -16,15 +17,18 @@
       <mat-toolbar class="header">
         @if (!isHandset()) {
         <button mat-icon-button (click)="drawer.toggle()">
-          <mat-icon class="material-symbols-outlined">menu</mat-icon>
+          <mat-icon class="material-symbols-outlined">{{drawer.opened ? 'menu_open' : 'menu'}}</mat-icon>
         </button>
         }
         <span>Dashboard</span>
         <span class="spacer"></span>
-        <button mat-icon-button>
-          <mat-icon class="material-symbols-outlined">search</mat-icon>
+        <button class="header-actions" mat-icon-button>
+          <mat-icon class="material-symbols-outlined">notifications</mat-icon>
         </button>
-        <button mat-icon-button>
+        <button class="header-actions" mat-icon-button>
+          <mat-icon class="material-symbols-outlined">chat</mat-icon>
+        </button>
+        <button class="header-actions" mat-mini-fab>
           <mat-icon class="material-symbols-outlined">person</mat-icon>
         </button>
       </mat-toolbar>

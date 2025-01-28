@@ -27,6 +27,7 @@ import { navigationConfig, NavItem } from '../config/navigation.config';
 })
 export class LayoutComponent {
   @ViewChild(MatDrawer) drawer!: MatDrawer;
+  logo: string = 'assets/images/logo.svg'
   
   destroyed = new Subject<void>();
   isHandset = signal(false);

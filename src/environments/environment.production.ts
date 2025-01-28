@@ -4,7 +4,6 @@ export const environment = {
   apiUrl: 'https://api.example.com/api',
   version: '1.0.0',
   defaultLanguage: 'en',
-  // Add production-specific configuration here
   enableDebugTools: false,
   logLevel: 'error',
   mockData: false,
