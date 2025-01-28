@@ -1,5 +1,6 @@
 <mat-drawer-container class="example-container">
     <mat-drawer #drawer [mode]="isHandset() ? 'over' : 'side'" class="drawer" opened>
+      <img src="" alt="">
       <mat-nav-list>
         @for (item of navItems(); track item.route) {
         <mat-list-item [routerLink]="item.route" routerLinkActive="active">
