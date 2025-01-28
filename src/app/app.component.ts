@@ -1,63 +1,50 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { CommonModule } from '@angular/common';
+import { Component, inject, signal, ViewChild } from '@angular/core';
+import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
-import { SidenavComponent } from './layout/sidenav/sidenav.component';
-import { BottomNavComponent } from './layout/bottom-nav/bottom-nav.component';
-import { HeaderComponent } from './layout/layout/header/header.component';
+import { RouterModule } from '@angular/router';
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { Subject } from 'rxjs';
+
+interface NavItem {
+  label: string;
+  icon: string;
+  route: string;
+}
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [
-    RouterOutlet, 
-    MatSidenavModule, 
-    MatToolbarModule,
-    MatIconModule,
-    MatButtonModule,
-    SidenavComponent,
-    HeaderComponent,
-    BottomNavComponent
-  ],
-  template: `
-    <div class="app-container">
-      <app-header></app-header>
-      <mat-drawer-container class="dashboard-container">
-        <mat-drawer mode="side" opened class="sidenav">
-          <app-sidenav></app-sidenav>
-        </mat-drawer>
-        <mat-drawer-content>
-          <router-outlet></router-outlet>
-        </mat-drawer-content>
-      </mat-drawer-container>
-      <app-bottom-nav class="mobile-nav"></app-bottom-nav>
-    </div>
-  `,
-  styles: [`
-    .app-container {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-    .dashboard-container {
-      flex-grow: 1;
-    }
-    .sidenav {
-      width: 250px;
-    }
-    .mobile-nav {
-      display: none;
-    }
-    @media (max-width: 600px) {
-      mat-drawer-container {
-        display: none;
-      }
-      .mobile-nav {
-        display: block;
-      }
-    }
-  `]
+  imports: [CommonModule, MatSidenavModule, RouterModule, MatListModule, MatIconModule, MatToolbarModule, MatButtonModule],
+  templateUrl: "./app.component.html",
+  styleUrls: ['./app.component.scss']
 })
-export class AppComponent {}
+export class AppComponent {
+  @ViewChild(MatDrawer) drawer!: MatDrawer;
+  destroyed = new Subject<void>();
+  isHandset = signal(false);
+  navItems = signal<NavItem[]>([
+    { label: 'Dashboard', icon: 'dashboard', route: '/dashboard' },
+    { label: 'Analytics', icon: 'analytics', route: '/analytics' },
+    { label: 'Profile', icon: 'person', route: '/profile' },
+    { label: 'Settings', icon: 'settings', route: '/settings' },
+    { label: 'Notifications', icon: 'notifications', route: '/notifications' }
+  ]);
+
+  constructor() {
+    inject(BreakpointObserver)
+      .observe([Breakpoints.HandsetPortrait])
+      .subscribe((result) => {
+        this.isHandset.set(result.matches);
+        this.drawer.toggle();
+      });
+  }
+
+  ngOnDestroy() {
+    this.destroyed.next();
+    this.destroyed.complete();
+  }
+
+}
