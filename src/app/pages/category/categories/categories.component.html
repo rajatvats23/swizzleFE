@@ -1,0 +1,54 @@
+<mat-card class="categories-container">
+    <mat-card-header>
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search Categories</mat-label>
+        <input matInput 
+               [ngModel]="searchQuery()"
+               (ngModelChange)="updateSearch($event)"
+               placeholder="Search...">
+        <mat-icon matPrefix>search</mat-icon>
+      </mat-form-field>
+      <button mat-raised-button 
+              color="primary" 
+              class="add-button"
+              (click)="openDialog()">
+        <mat-icon>add</mat-icon>
+        Add Category
+      </button>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="categories-grid">
+        @for (category of displayedCategories(); track category.id) {
+          <mat-card class="category-card">
+            <div class="category-actions">
+              <button mat-icon-button (click)="viewCategory(category)">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <button mat-icon-button (click)="editCategory(category)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteCategory(category)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+            <!-- <img [src]="category.imageUrl" [alt]="category.name"> -->
+            <mat-card-content>
+              <h3>{{category.name}}</h3>
+              <p>{{category.description}}</p>
+            </mat-card-content>
+          </mat-card>
+        }
+      </div>
+    </mat-card-content>
+
+    <mat-card-footer>
+      <mat-paginator
+        [length]="filteredCategories().length"
+        [pageSize]="pageSize()"
+        [pageSizeOptions]="[6, 12, 24]"
+        (page)="handlePageEvent($event)"
+        aria-label="Select page">
+      </mat-paginator>
+    </mat-card-footer>
+  </mat-card>

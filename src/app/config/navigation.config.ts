@@ -28,9 +28,9 @@ export interface NavItem {
         route: '/analytics',
       },
       { 
-        label: 'Profile', 
-        icon: 'person', 
-        route: '/profile',
+        label: 'Category', 
+        icon: 'category', 
+        route: '/category',
       },
       { 
         label: 'Settings', 

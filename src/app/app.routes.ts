@@ -15,13 +15,13 @@ export const routes: Routes = [
     path: 'analytics',
     loadComponent: () => import('./pages/analytics/analytics.component').then(m => m.AnalyticsComponent)
   },
-//   {
-//     path: 'profile',
-//     loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent)
-//   },
+  {
+    path: 'category',
+    loadComponent: () => import('./pages/category/categories/categories.component').then(m => m.CategoriesComponent)
+  },
 //   {
 //     path: 'settings',
-//     loadComponent: () => import('./pages/settings/settings.component').then(m => m.SettingsComponent)
+//     loadComponent: () => import('./pages/category/settings.component').then(m => m.SettingsComponent)
 //   },
 //   {
 //     path: 'notifications',

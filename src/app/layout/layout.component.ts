@@ -1,26 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal, ViewChild } from '@angular/core';
-import { MatDrawer, MatSidenavModule } from '@angular/material/sidenav';
-import { MatListModule } from '@angular/material/list';
-import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
+import { MatDrawer} from '@angular/material/sidenav';
 import { RouterModule } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Subject } from 'rxjs';
 import { navigationConfig, NavItem } from '../config/navigation.config';
+import { SharedModule } from '../shared/shared.module';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
   imports: [
     CommonModule, 
-    MatSidenavModule, 
-    RouterModule, 
-    MatListModule, 
-    MatIconModule, 
-    MatToolbarModule, 
-    MatButtonModule
+    RouterModule,
+    SharedModule
   ],
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss']
