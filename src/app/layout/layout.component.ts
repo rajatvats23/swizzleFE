@@ -20,7 +20,7 @@ import { SharedModule } from '../shared/shared.module';
 })
 export class LayoutComponent {
   @ViewChild(MatDrawer) drawer!: MatDrawer;
-  logo: string = 'assets/images/logo.svg';
+  logo: string = '/assets/images/logo.svg';
   destroyed = new Subject<void>();
   isHandset = signal(false);
   navItems = signal<NavItem[]>(navigationConfig.items);
@@ -40,11 +40,10 @@ export class LayoutComponent {
 
   async toggleSidenavView() {
     if (this.drawer) {
-      await this.drawer.close();
-      setTimeout(() => {
+      await this.drawer.close().then(() => {
         this.isExpanded.set(!this.isExpanded());
         this.drawer.open();
-      }, 200);
+      })
     }
   }
 

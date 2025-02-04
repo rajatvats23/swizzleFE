@@ -12,8 +12,8 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent)
   },
   {
-    path: 'analytics',
-    loadComponent: () => import('./pages/analytics/analytics.component').then(m => m.AnalyticsComponent)
+    path: 'admins',
+    loadComponent: () => import('./pages/admins/admins.component').then(m => m.AdminsComponent)
   },
   {
     path: 'category',

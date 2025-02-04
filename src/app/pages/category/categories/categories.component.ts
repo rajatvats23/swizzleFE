@@ -9,142 +9,38 @@ import { SharedModule } from "../../../shared/shared.module";
 import { CategoryDetailsComponent } from "../category-details/category-details.component";
 
 @Component({
-  selector: "app-category",
-  imports: [
-    CommonModule,
-    SharedModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatDialogModule,
-  ],
-  templateUrl: "./categories.component.html",
-  styleUrl: "./categories.component.scss",
+  selector: 'app-category',
+  imports: [CommonModule, SharedModule, FormsModule, ReactiveFormsModule, MatInputModule, MatDialogModule],
+  templateUrl: './categories.component.html',
+  styleUrl: './categories.component.scss',
 })
 export class CategoriesComponent {
   CATEGORIES: Category[] = [
-    {
-      id: 1,
-      name: "Pizzas",
-      description: "Italian hand-tossed pizzas",
-      imageUrl: "assets/images/pizza.svg",
-      thumbnailUrl: "assets/images/pizza.svg",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 2,
-      name: "Desserts",
-      description: "Sweet treats and confections",
-      imageUrl: "assets/images/pizza.svg",
-      thumbnailUrl: "assets/images/pizza.svg",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 3,
-      name: "Beverages",
-      description: "Refreshing drinks",
-      imageUrl: "assets/images/pizza.svg",
-      thumbnailUrl: "assets/images/pizza.svg",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 4,
-      name: "Snacks",
-      description: "Quick bites and appetizers",
-      imageUrl: "assets/images/pizza.svg",
-      thumbnailUrl: "assets/images/pizza.svg",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 5,
-      name: "Main Course",
-      description: "Hearty main dishes",
-      imageUrl: "assets/images/pizza.svg",
-      thumbnailUrl: "assets/images/pizza.svg",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 6,
-      name: "Salads",
-      description: "Fresh and healthy salads",
-      imageUrl: "assets/images/pizza.svg",
-      thumbnailUrl: "assets/images/pizza.svg",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 7,
-      name: "Pasta",
-      description: "Italian pasta dishes",
-      imageUrl: "assets/images/pizza.svg",
-      thumbnailUrl: "assets/images/pizza.svg",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 8,
-      name: "Soups",
-      description: "Warm and comforting soups",
-      imageUrl: "assets/images/pizza.svg",
-      thumbnailUrl: "assets/images/pizza.svg",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 9,
-      name: "Sandwiches",
-      description: "Fresh sandwiches",
-      imageUrl: "assets/images/pizza.svg",
-      thumbnailUrl: "assets/images/pizza.svg",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 10,
-      name: "Breakfast",
-      description: "Morning favorites",
-      imageUrl: "assets/images/pizza.svg",
-      thumbnailUrl: "assets/images/pizza.svg",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 11,
-      name: "Asian",
-      description: "Asian cuisine",
-      imageUrl: "assets/images/pizza.svg",
-      thumbnailUrl: "assets/images/pizza.svg",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 12,
-      name: "Mexican",
-      description: "Mexican specialties",
-      imageUrl: "assets/images/pizza.svg",
-      thumbnailUrl: "assets/images/pizza.svg",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
+    { id: 1, name: 'Pizzas', description: 'Italian hand-tossed pizzas', imageUrl: 'assets/images/pancake.svg', thumbnailUrl: 'assets/images/pancake.svg', createdAt: new Date(), updatedAt: new Date() },
+    { id: 2, name: 'Desserts', description: 'Sweet treats and confections', imageUrl: 'assets/images/pancake.svg', thumbnailUrl: 'assets/images/pancake.svg', createdAt: new Date(), updatedAt: new Date() },
+    { id: 3, name: 'Beverages', description: 'Refreshing drinks', imageUrl: 'assets/images/pancake.svg', thumbnailUrl: 'assets/images/pancake.svg', createdAt: new Date(), updatedAt: new Date() },
+    { id: 4, name: 'Snacks', description: 'Quick bites and appetizers', imageUrl: 'assets/images/pancake.svg', thumbnailUrl: 'assets/images/pancake.svg', createdAt: new Date(), updatedAt: new Date() },
+    { id: 5, name: 'Main Course', description: 'Hearty main dishes', imageUrl: 'assets/images/pancake.svg', thumbnailUrl: 'assets/images/pancake.svg', createdAt: new Date(), updatedAt: new Date() },
+    { id: 6, name: 'Salads', description: 'Fresh and healthy salads', imageUrl: 'assets/images/pancake.svg', thumbnailUrl: 'assets/images/pancake.svg', createdAt: new Date(), updatedAt: new Date() },
+    { id: 7, name: 'Pasta', description: 'Italian pasta dishes', imageUrl: 'assets/images/pancake.svg', thumbnailUrl: 'assets/images/pancake.svg', createdAt: new Date(), updatedAt: new Date() },
+    { id: 8, name: 'Soups', description: 'Warm and comforting soups', imageUrl: 'assets/images/pancake.svg', thumbnailUrl: 'assets/images/pancake.svg', createdAt: new Date(), updatedAt: new Date() },
+    { id: 9, name: 'Sandwiches', description: 'Fresh sandwiches', imageUrl: 'assets/images/pancake.svg', thumbnailUrl: 'assets/images/pancake.svg', createdAt: new Date(), updatedAt: new Date() },
+    { id: 10, name: 'Breakfast', description: 'Morning favorites', imageUrl: 'assets/images/pancake.svg', thumbnailUrl: 'assets/images/pancake.svg', createdAt: new Date(), updatedAt: new Date() },
+    { id: 11, name: 'Asian', description: 'Asian cuisine', imageUrl: 'assets/images/pancake.svg', thumbnailUrl: 'assets/images/pancake.svg', createdAt: new Date(), updatedAt: new Date() },
+    { id: 12, name: 'Mexican', description: 'Mexican specialties', imageUrl: 'assets/images/pancake.svg', thumbnailUrl: 'assets/images/pancake.svg', createdAt: new Date(), updatedAt: new Date() }
   ];
   private dialog = inject(MatDialog);
 
   categories = signal<Category[]>(this.CATEGORIES);
-  searchQuery = signal<string>("");
+  searchQuery = signal<string>('');
   currentPage = signal<number>(0);
   pageSize = signal<number>(12);
 
   filteredCategories = computed(() => {
     const query = this.searchQuery().toLowerCase();
-    return this.categories().filter(
-      (category) =>
-        category.name.toLowerCase().includes(query) ||
-        category.description.toLowerCase().includes(query)
+    return this.categories().filter(category =>
+      category.name.toLowerCase().includes(query) ||
+      category.description.toLowerCase().includes(query)
     );
   });
 
@@ -165,10 +61,8 @@ export class CategoriesComponent {
   }
 
   openDialog(): void {
-    this.dialog
-      .open(CategoryDetailsComponent, {})
-      .afterClosed()
-      .subscribe(() => {});
+    this.dialog.open(CategoryDetailsComponent, {}).afterClosed().subscribe(() => {
+          });
   }
 
   viewCategory(category: Category): void {

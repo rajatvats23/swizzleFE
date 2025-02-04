@@ -5,8 +5,8 @@
               [class.drawer-collapsed]="!isExpanded()" 
               opened>
     <div class="logo-container">
-      <img [src]="logo" alt="Logo" height="32" *ngIf="isExpanded()">
-      <img [src]="logo" alt="Logo" height="24" *ngIf="!isExpanded()">
+      <!-- <img src="assets/images/logo.svg" alt="Logo" height="32" *ngIf="isExpanded()"> -->
+      <!-- <img src="assets/images/logo.svg" alt="Logo" height="24" *ngIf="!isExpanded()"> -->
     </div>
     <mat-nav-list>
       @for (item of navItems(); track item.route) {

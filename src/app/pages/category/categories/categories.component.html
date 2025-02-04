@@ -23,17 +23,17 @@
           <mat-card class="category-card">
             <div class="category-actions">
               <button mat-icon-button (click)="viewCategory(category)">
-                <mat-icon>visibility</mat-icon>
+                <mat-icon class="material-symbols-outlined">visibility</mat-icon>
               </button>
               <button mat-icon-button (click)="editCategory(category)">
-                <mat-icon>edit</mat-icon>
+                <mat-icon class="material-symbols-outlined">edit</mat-icon>
               </button>
               <button mat-icon-button color="warn" (click)="deleteCategory(category)">
-                <mat-icon>delete</mat-icon>
+                <mat-icon class="material-symbols-outlined">delete</mat-icon>
               </button>
             </div>
             <img [src]="category.imageUrl" [alt]="category.name">
-            <mat-card-content>
+            <mat-card-content class="category-details">
               <h3>{{category.name}}</h3>
               <p>{{category.description}}</p>
             </mat-card-content>
@@ -44,6 +44,7 @@
 
     <mat-card-footer>
       <mat-paginator
+      class="paginator"
         [length]="filteredCategories().length"
         [pageSize]="pageSize()"
         [pageSizeOptions]="[6, 12, 24]"

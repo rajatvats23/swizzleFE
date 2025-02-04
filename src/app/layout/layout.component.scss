@@ -3,7 +3,7 @@ $background-color: #f1f1f1;
 $drawer-bg-color: white;
 $shadow-color: rgba(0, 0, 0, 0.1);
 $active-bg-color: rgba(25, 118, 210, 0.1);
-$transition-duration: 0.3s;
+// $transition-duration: 0.3s;
 $primary-color: #009C4C;
 $header-height: 64px;
 
@@ -15,11 +15,10 @@ $header-height: 64px;
 
 // Drawer styles
 .drawer {
-  background-color: $primary-color;
+  background-color: white !important;
   border: none !important;
   padding: 16px 8px !important;
   box-shadow: 2px 0 8px $shadow-color;
-  transition: all $transition-duration ease-in-out;
   overflow-x: hidden;
   border-radius: 0 !important;
   
@@ -41,11 +40,11 @@ $header-height: 64px;
 }
 
 .nav-label {
-  color: #f1f1f1 !important;
+  color: $primary-color !important;
 }
 
 .nav-icon {
-  color: #f1f1f1 !important;
+  color: $primary-color !important;
 }
 
 // Navigation list styles

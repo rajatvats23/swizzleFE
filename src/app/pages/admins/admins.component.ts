@@ -1,8 +1,8 @@
 import { Component } from "@angular/core";
 
 @Component({
-    selector: 'app-analytics',
+    selector: 'app-admins',
     template: '',
     standalone: true
 })
-export class AnalyticsComponent{}
+export class AdminsComponent{}
