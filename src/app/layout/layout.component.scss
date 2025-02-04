@@ -1,28 +1,121 @@
 // Variables
-$background-color: whitesmoke;
-$shadow-color: rgba(0, 0, 0, 0.611);
-$active-bg-color: rgba(0, 0, 0, 0.1);
+$background-color: #f1f1f1;
+$drawer-bg-color: white;
+$shadow-color: rgba(0, 0, 0, 0.1);
+$active-bg-color: rgba(25, 118, 210, 0.1);
+$transition-duration: 0.3s;
+$primary-color: #009C4C;
+$header-height: 64px;
 
 // Container styles
 .example-container {
   height: 100vh;
+  background-color: $background-color;
 }
 
 // Drawer styles
 .drawer {
-  background-color: $background-color;
-  max-width: fit-content;
+  background-color: $primary-color;
+  border: none !important;
+  padding: 16px 8px !important;
+  box-shadow: 2px 0 8px $shadow-color;
+  transition: all $transition-duration ease-in-out;
+  overflow-x: hidden;
   border-radius: 0 !important;
-  padding: 10px 10px !important;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+  
+  &.drawer-expanded {
+    width: auto;
+  }
+  
+  &.drawer-collapsed {
+    width: 72px;
+  }
+
+  .logo-container {
+    height: 48px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
-.header-actions {
-  margin-right: 15px;
+.nav-label {
+  color: #f1f1f1 !important;
+}
+
+.nav-icon {
+  color: #f1f1f1 !important;
+}
+
+// Navigation list styles
+:host ::ng-deep {
+  .mat-mdc-list-base {
+    padding: 0;
+  }
+
+  .mat-mdc-list-item {
+    margin: 4px 0;
+    border-radius: none;
+    height: 48px;
+    padding-left: 15px !important;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+
+    .mdc-list-item__content {
+      padding: 0 8px;
+    }
+
+    .mat-mdc-list-item-icon {
+      margin: 0;
+      color: rgba(0, 0, 0, 0.7);
+    }
+
+    &.active {
+      background-color: $active-bg-color;
+      
+      .mat-icon, .mdc-list-item__content {
+        color: var(--mat-primary-color);
+      }
+    }
+  }
+}
+
+// Header styles
+.header {
+  background-color: $drawer-bg-color !important;
+  height: $header-height;
+  box-shadow: 0 1px 4px $shadow-color;
+  padding: 0 16px;
+
+  .header-title {
+    font-size: 20px;
+    font-weight: 500;
+  }
+
+  .header-actions {
+    margin-left: 12px;
+
+    .mat-icon {
+      color: rgba(0, 0, 0, 0.7);
+    }
+  }
+
+  .mat-mini-fab {
+    background-color: $active-bg-color;
+    box-shadow: none;
+    
+    .mat-icon {
+      color: var(--mat-primary-color);
+    }
+  }
 }
 
 // Content area styles
 .drawer-content {
+  background-color: $background-color;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -31,37 +124,7 @@ $active-bg-color: rgba(0, 0, 0, 0.1);
 .main-content {
   flex: 1;
   overflow-y: auto;
-  padding: 20px;
-}
-
-// Header styles
-.header {
-  background-color: $background-color !important;
-  box-shadow: 0px 1px 3px 2px rgba(0, 0, 0, 0.05);
-}
-
-// Utility classes
-.spacer {
-  flex: 1 1 auto;
-}
-
-.flex-horz {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  align-items: center;
-}
-
-.menu {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-}
-
-// Active state styles
-.active {
-  background-color: $active-bg-color;
-  color: var(--mat-primary-color);
+  padding: 24px;
 }
 
 // Bottom Navigation
@@ -69,43 +132,50 @@ $active-bg-color: rgba(0, 0, 0, 0.1);
   display: flex;
   justify-content: space-evenly;
   align-items: center;
-  background-color: $background-color;
+  background-color: $drawer-bg-color;
   padding: 8px 0;
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  box-shadow: 0 -2px 5px $shadow-color;
+  box-shadow: 0 -2px 8px $shadow-color;
   z-index: 1000;
-}
+  height: 64px;
 
-.bottom-nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-  color: inherit;
-  padding: 4px 0;
-  min-width: 64px;
-  transition: color 0.2s ease;
+  .bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: rgba(0, 0, 0, 0.7);
+    padding: 4px 0;
+    min-width: 72px;
+    transition: all 0.2s ease;
 
-  &.active {
-    color: var(--mat-primary-color);
+    .mat-icon {
+      margin-bottom: 4px;
+    }
+
+    &.active {
+      color: var(--mat-primary-color);
+    }
+  }
+
+  .bottom-nav-label {
+    font-size: 12px;
+    font-weight: 500;
   }
 }
 
-.bottom-nav-label {
-  font-size: 12px;
-  margin-top: 4px;
+// Utility classes
+.spacer {
+  flex: 1;
 }
 
-// Media queries for responsive design
+// Media queries
 @media screen and (max-width: 599px) {
-  .bottom-nav {
-    height: 56px;
-  }
-
   .main-content {
-    padding-bottom: 76px; // Account for bottom nav
+    padding: 16px;
+    padding-bottom: 80px;
   }
 }

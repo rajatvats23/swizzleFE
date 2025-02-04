@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal, ViewChild } from '@angular/core';
-import { MatDrawer} from '@angular/material/sidenav';
+import { MatDrawer } from '@angular/material/sidenav';
 import { RouterModule } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Subject } from 'rxjs';
@@ -20,12 +20,12 @@ import { SharedModule } from '../shared/shared.module';
 })
 export class LayoutComponent {
   @ViewChild(MatDrawer) drawer!: MatDrawer;
-  logo: string = 'assets/images/logo.svg'
-  
+  logo: string = 'assets/images/logo.svg';
   destroyed = new Subject<void>();
   isHandset = signal(false);
   navItems = signal<NavItem[]>(navigationConfig.items);
   appTitle = navigationConfig.appTitle;
+  isExpanded = signal(true);
   
   constructor() {
     inject(BreakpointObserver)
@@ -36,6 +36,16 @@ export class LayoutComponent {
           this.drawer.toggle();
         }
       });
+  }
+
+  async toggleSidenavView() {
+    if (this.drawer) {
+      await this.drawer.close();
+      setTimeout(() => {
+        this.isExpanded.set(!this.isExpanded());
+        this.drawer.open();
+      }, 200);
+    }
   }
 
   ngOnDestroy() {

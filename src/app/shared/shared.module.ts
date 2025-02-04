@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 const declarations = [
     MatCardModule,MatSidenavModule, MatListModule, 
@@ -16,7 +17,8 @@ const declarations = [
         MatButtonModule,
         MatPaginatorModule,
         MatDialogModule,
-        MatFormFieldModule
+        MatFormFieldModule,
+        MatTooltipModule
 ]
 @NgModule({
     imports: [...declarations],
