@@ -22,6 +22,8 @@ export class LayoutComponent {
   @ViewChild(MatDrawer) drawer!: MatDrawer;
   logo: string = '/assets/images/logo.svg';
   destroyed = new Subject<void>();
+  showSidenavToggle = signal(true);
+  left: string = '73px';
   isHandset = signal(false);
   navItems = signal<NavItem[]>(navigationConfig.items);
   appTitle = navigationConfig.appTitle;
@@ -40,9 +42,13 @@ export class LayoutComponent {
 
   async toggleSidenavView() {
     if (this.drawer) {
+      this.showSidenavToggle.set(false);
       await this.drawer.close().then(() => {
         this.isExpanded.set(!this.isExpanded());
-        this.drawer.open();
+        this.drawer.open().then(() => {
+          this.showSidenavToggle.set(true);
+        })
+        
       })
     }
   }

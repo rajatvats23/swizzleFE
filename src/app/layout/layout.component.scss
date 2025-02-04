@@ -182,3 +182,22 @@ $header-height: 64px;
     padding-bottom: 80px;
   }
 }
+
+.toggle-sidenav {
+  position: absolute;
+  top: 7%;
+  padding: 4px;
+  width: 30px;
+  left: 61px;
+  height: 22px;
+  background-color: rgb(255, 255, 255) !important;
+  border-radius: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 909;
+  mat-icon {
+    font-size: 16px;
+  }
+  &.expanded {
+    left: 172px;
+  }
+}
