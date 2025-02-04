@@ -4,7 +4,7 @@ $drawer-bg-color: white;
 $shadow-color: rgba(0, 0, 0, 0.1);
 $active-bg-color: rgba(25, 118, 210, 0.1);
 // $transition-duration: 0.3s;
-$primary-color: #009C4C;
+$primary-color: #009c4c;
 $header-height: 64px;
 
 // Container styles
@@ -21,11 +21,11 @@ $header-height: 64px;
   box-shadow: 2px 0 8px $shadow-color;
   overflow-x: hidden;
   border-radius: 0 !important;
-  
+
   &.drawer-expanded {
     width: auto;
   }
-  
+
   &.drawer-collapsed {
     width: 72px;
   }
@@ -58,9 +58,11 @@ $header-height: 64px;
     border-radius: none;
     height: 48px;
     padding-left: 15px !important;
-    
+
     &:hover {
-      background-color: rgba(0, 0, 0, 0.04);
+      // background-color: rgba(0, 0, 0, 0.04);
+      background-color: white !important;
+      border: 1px solid rgba(0, 156, 76, 0.5);
     }
 
     .mdc-list-item__content {
@@ -73,9 +75,10 @@ $header-height: 64px;
     }
 
     &.active {
-      background-color: $active-bg-color;
-      
-      .mat-icon, .mdc-list-item__content {
+      background-color: rgba(0, 156, 76, 0.2) !important ;
+
+      .mat-icon,
+      .mdc-list-item__content {
         color: var(--mat-primary-color);
       }
     }
@@ -84,10 +87,11 @@ $header-height: 64px;
 
 // Header styles
 .header {
-  background-color: $drawer-bg-color !important;
+  background-color: $primary-color !important;
   height: $header-height;
   box-shadow: 0 1px 4px $shadow-color;
   padding: 0 16px;
+  color: white !important;
 
   .header-title {
     font-size: 20px;
@@ -96,16 +100,15 @@ $header-height: 64px;
 
   .header-actions {
     margin-left: 12px;
-
-    .mat-icon {
-      color: rgba(0, 0, 0, 0.7);
-    }
+  }
+  .mat-icon {
+    color: white !important;
   }
 
   .mat-mini-fab {
     background-color: $active-bg-color;
     box-shadow: none;
-    
+
     .mat-icon {
       color: var(--mat-primary-color);
     }
@@ -124,6 +127,7 @@ $header-height: 64px;
   flex: 1;
   overflow-y: auto;
   padding: 24px;
+  background-color: white !important;
 }
 
 // Bottom Navigation

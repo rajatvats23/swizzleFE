@@ -1,59 +1,5 @@
 
-// Custom Theming for Angular Material
-// For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
-
-// $primary-palette: (
-//   50: lighten(#009C4C, 40%),
-//   100: lighten(#009C4C, 30%),
-//   200: lighten(#009C4C, 20%),
-//   300: lighten(#009C4C, 10%),
-//   400: lighten(#009C4C, 5%),
-//   500: #009C4C,
-//   600: darken(#009C4C, 5%),
-//   700: darken(#009C4C, 10%),
-//   800: darken(#009C4C, 20%),
-//   900: darken(#009C4C, 30%),
-//   contrast: (
-//     50: rgba(black, 0.87),
-//     100: rgba(black, 0.87),
-//     200: rgba(black, 0.87),
-//     300: white,
-//     400: white,
-//     500: white,
-//     600: white,
-//     700: white,
-//     800: white,
-//     900: white,
-//   )
-// );
-
-
-// $secondary-palette: (
-//   50: lighten(#FFB30E, 40%),
-//   100: lighten(#FFB30E, 30%),
-//   200: lighten(#FFB30E, 20%),
-//   300: lighten(#FFB30E, 10%),
-//   400: lighten(#FFB30E, 5%),
-//   500: #FFB30E,
-//   600: darken(#FFB30E, 5%),
-//   700: darken(#FFB30E, 10%),
-//   800: darken(#FFB30E, 20%),
-//   900: darken(#FFB30E, 30%),
-//   contrast: (
-//     50: rgba(black, 0.87),
-//     100: rgba(black, 0.87),
-//     200: rgba(black, 0.87),
-//     300: rgba(black, 0.87),
-//     400: rgba(black, 0.87),
-//     500: rgba(black, 0.87),
-//     600: rgba(black, 0.87),
-//     700: white,
-//     800: white,
-//     900: white,
-//   )
-// );
-
 
 html {
   @include mat.theme((
@@ -65,7 +11,7 @@ html {
     typography: Roboto,
     density: 0,
   ));
-}/* You can add global styles to this file, and also import other style files */
+}
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

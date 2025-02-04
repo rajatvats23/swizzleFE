@@ -5,6 +5,7 @@
 
 .categories-container {
   margin: 20px;
+  background-color: rgba(256, 256, 256, 0.6);
 }
 
 mat-card-header {
@@ -16,11 +17,13 @@ mat-card-header {
 
 .add-button {
   margin-left: auto;
+  background-color: #009c4c !important;
+  color: white !important;
 }
 
 .categories-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 250px));
   gap: 20px;
   padding: 20px;
 }
@@ -57,7 +60,6 @@ mat-card-header {
   img {
     width: 100%;
     height: 200px;
-    object-fit: cover;
   }
 
   .category-actions {

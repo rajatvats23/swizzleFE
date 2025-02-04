@@ -1,25 +1,40 @@
 <mat-drawer-container class="example-container">
-  <mat-drawer #drawer [mode]="isHandset() ? 'over' : 'side'" 
-              class="drawer" 
-              [class.drawer-expanded]="isExpanded()"
-              [class.drawer-collapsed]="!isExpanded()" 
-              opened>
+  <mat-drawer
+    #drawer
+    [mode]="isHandset() ? 'over' : 'side'"
+    class="drawer"
+    [class.drawer-expanded]="isExpanded()"
+    [class.drawer-collapsed]="!isExpanded()"
+    opened
+  >
     <div class="logo-container">
-      <!-- <img src="assets/images/logo.svg" alt="Logo" height="32" *ngIf="isExpanded()"> -->
-      <!-- <img src="assets/images/logo.svg" alt="Logo" height="24" *ngIf="!isExpanded()"> -->
+      <img
+        src="assets/images/logo.svg"
+        alt="Logo"
+        height="32"
+        *ngIf="isExpanded()"
+      />
+      <img
+        src="assets/images/logo.svg"
+        alt="Logo"
+        height="24"
+        *ngIf="!isExpanded()"
+      />
     </div>
     <mat-nav-list>
       @for (item of navItems(); track item.route) {
-      <mat-list-item [routerLink]="item.route" 
-                     routerLinkActive="active"
-                     [matTooltip]="!isExpanded() ? item.label : ''"
-                     [matTooltipPosition]="'right'"
-                     [matTooltipShowDelay]="500">
+      <mat-list-item
+        [routerLink]="item.route"
+        routerLinkActive="active"
+        [matTooltip]="!isExpanded() ? item.label : ''"
+        [matTooltipPosition]="'right'"
+        [matTooltipShowDelay]="500"
+      >
         <mat-icon class="nav-icon material-symbols-outlined" matListItemIcon>
-          {{item.icon}}
+          {{ item.icon }}
         </mat-icon>
         @if (isExpanded()) {
-        <span class="nav-label" matListItemTitle>{{item.label}}</span>
+        <span class="nav-label" matListItemTitle>{{ item.label }}</span>
         }
       </mat-list-item>
       }
@@ -28,16 +43,26 @@
   <mat-drawer-content class="drawer-content">
     <mat-toolbar class="header">
       @if (!isHandset()) {
-      <button mat-icon-button (click)="drawer.toggle()" matTooltip="Toggle menu">
-        <mat-icon class="material-symbols-outlined">{{drawer.opened ? 'menu_open' : 'menu'}}</mat-icon>
+      <button
+        mat-icon-button
+        (click)="drawer.toggle()"
+        matTooltip="Toggle menu"
+      >
+        <mat-icon class="material-symbols-outlined">{{
+          drawer.opened ? "menu_open" : "menu"
+        }}</mat-icon>
       </button>
-      <button mat-icon-button (click)="toggleSidenavView()" matTooltip="{{isExpanded() ? 'Collapse menu' : 'Expand menu'}}">
+      <button
+        mat-icon-button
+        (click)="toggleSidenavView()"
+        matTooltip="{{ isExpanded() ? 'Collapse menu' : 'Expand menu' }}"
+      >
         <mat-icon class="material-symbols-outlined">
-          {{isExpanded() ? 'chevron_left' : 'chevron_right'}}
+          {{ isExpanded() ? "chevron_left" : "chevron_right" }}
         </mat-icon>
       </button>
       }
-      <span class="header-title">{{appTitle}}</span>
+      <span class="header-title">{{ appTitle }}</span>
       <span class="spacer"></span>
       <button class="header-actions" mat-icon-button matTooltip="Notifications">
         <mat-icon class="material-symbols-outlined">notifications</mat-icon>
@@ -45,11 +70,11 @@
       <button class="header-actions" mat-icon-button matTooltip="Messages">
         <mat-icon class="material-symbols-outlined">chat</mat-icon>
       </button>
-      <button class="header-actions" mat-mini-fab matTooltip="Profile">
+      <button class="header-actions" mat-icon-button matTooltip="Profile">
         <mat-icon class="material-symbols-outlined">person</mat-icon>
       </button>
     </mat-toolbar>
-    
+
     <div class="main-content">
       <router-outlet></router-outlet>
     </div>
@@ -57,9 +82,13 @@
     @if (isHandset()) {
     <nav class="bottom-nav">
       @for (item of navItems(); track item.route) {
-      <a class="bottom-nav-item" [routerLink]="item.route" routerLinkActive="active">
-        <mat-icon class="material-symbols-outlined">{{item.icon}}</mat-icon>
-        <span class="bottom-nav-label">{{item.label}}</span>
+      <a
+        class="bottom-nav-item"
+        [routerLink]="item.route"
+        routerLinkActive="active"
+      >
+        <mat-icon class="material-symbols-outlined">{{ item.icon }}</mat-icon>
+        <span class="bottom-nav-label">{{ item.label }}</span>
       </a>
       }
     </nav>
