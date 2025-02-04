@@ -23,9 +23,9 @@ export interface NavItem {
         route: '/dashboard',
       },
       { 
-        label: 'Analytics', 
-        icon: 'analytics', 
-        route: '/analytics',
+        label: 'Admins', 
+        icon: 'shield_person', 
+        route: '/admins',
       },
       { 
         label: 'Category', 
