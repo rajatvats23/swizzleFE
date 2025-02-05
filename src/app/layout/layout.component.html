@@ -86,7 +86,7 @@
     }
   </mat-drawer-content>
 </mat-drawer-container>
-@if (!isHandset() && showSidenavToggle()) {
+@if (!isHandset() && showSidenavToggle() && drawer.opened) {
 <button
         mat-icon-button
         [ngClass]="isExpanded() ? 'toggle-sidenav expanded' : 'toggle-sidenav'"
