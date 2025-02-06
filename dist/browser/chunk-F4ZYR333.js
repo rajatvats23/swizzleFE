@@ -1,0 +1,1 @@
+import{Ib as s,Jb as n,_b as m,mb as o}from"./chunk-X47PMSGC.js";var p=class t{static \u0275fac=function(e){return new(e||t)};static \u0275cmp=o({type:t,selectors:[["app-customers"]],decls:2,vars:0,template:function(e,a){e&1&&(s(0,"p"),m(1,"customers works!"),n())},encapsulation:2})};export{p as CustomersComponent};

@@ -15,7 +15,7 @@ import { CategoryDetailsComponent } from "../category-details/category-details.c
   styleUrl: './categories.component.scss',
 })
 export class CategoriesComponent {
-  pancake: string = 'assets/images/pancake.webp';
+  pancake: string = 'assets/images/food-placeholder.jpg';
   CATEGORIES: Category[] = [
     { id: 1, name: 'Pizzas', description: 'Italian hand-tossed pizzas', imageUrl: this.pancake, thumbnailUrl: this.pancake, createdAt: new Date(), updatedAt: new Date() },
     { id: 2, name: 'Desserts', description: 'Sweet treats and confections', imageUrl: this.pancake, thumbnailUrl: this.pancake, createdAt: new Date(), updatedAt: new Date() },
