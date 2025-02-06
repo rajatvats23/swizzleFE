@@ -12,7 +12,7 @@ export interface NavigationConfig {
 }
 
 export const navigationConfig: NavigationConfig = {
-  appTitle: 'Dashboard',
+  appTitle: 'SWIZZLE',
   items: [
     { label: 'Category', icon: 'category', route: '/category' },
     { label: 'Product', icon: 'inventory_2', route: '/products' },
