@@ -3,11 +3,21 @@ $background-color: #f1f1f1;
 $drawer-bg-color: white;
 $shadow-color: rgba(0, 0, 0, 0.1);
 $active-bg-color: rgba(25, 118, 210, 0.1);
-// $transition-duration: 0.3s;
 $primary-color: #009c4c;
 $header-height: 64px;
+$text-dark: #232325;
 
-// Container styles
+// Mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+}
+
+@mixin box-shadow($shadow) {
+  box-shadow: $shadow;
+}
+
+// Base styles
 .example-container {
   height: 100vh;
   background-color: $background-color;
@@ -15,39 +25,32 @@ $header-height: 64px;
 
 // Drawer styles
 .drawer {
-  background-color: white !important;
+  background-color: $primary-color !important;
   border: none !important;
   padding: 16px 8px !important;
-  box-shadow: 2px 0 8px $shadow-color;
+  @include box-shadow(2px 0 8px $shadow-color);
   overflow-x: hidden;
   border-radius: 0 !important;
 
-  &.drawer-expanded {
-    width: auto;
-  }
-
-  &.drawer-collapsed {
-    width: 72px;
-  }
+  &-expanded { width: auto; }
+  &-collapsed { width: 72px; }
 
   .logo-container {
     height: 48px;
     margin-bottom: 24px;
-    display: flex;
-    align-items: center;
+    @include flex-center;
     justify-content: center;
   }
 }
 
-.nav-label {
-  color: $primary-color !important;
+.nav {
+  &-label,
+  &-icon {
+    color: white !important;
+  }
 }
 
-.nav-icon {
-  color: $primary-color !important;
-}
-
-// Navigation list styles
+// Deep nested styles optimization
 :host ::ng-deep {
   .mat-mdc-list-base {
     padding: 0;
@@ -69,11 +72,11 @@ $header-height: 64px;
 
     .mat-mdc-list-item-icon {
       margin: 0;
-      color: rgba(0, 0, 0, 0.7);
+      color: $text-dark;
     }
 
     &.active {
-      background-color: rgba(0, 156, 76, 0.2) !important ;
+      background-color: rgba($primary-color, 0.2) !important;
 
       .mat-icon,
       .mdc-list-item__content {
@@ -85,22 +88,25 @@ $header-height: 64px;
 
 // Header styles
 .header {
-  background-color: $primary-color !important;
+  @include flex-center;
+  background-color: white !important;
   height: $header-height;
-  box-shadow: 0 1px 4px $shadow-color;
   padding: 0 16px;
-  color: white !important;
+  color: $text-dark !important;  
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+  
 
-  .header-title {
+  &-title {
     font-size: 20px;
     font-weight: 500;
   }
 
-  .header-actions {
+  &-actions {
     margin-left: 12px;
   }
+
   .mat-icon {
-    color: white !important;
+    color: $text-dark !important;
   }
 
   .mat-mini-fab {
@@ -130,25 +136,24 @@ $header-height: 64px;
 
 // Bottom Navigation
 .bottom-nav {
-  display: flex;
+  @include flex-center;
   justify-content: space-evenly;
-  align-items: center;
   background-color: $drawer-bg-color;
   padding: 8px 0;
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  box-shadow: 0 -2px 8px $shadow-color;
+  @include box-shadow(0 -2px 8px $shadow-color);
   z-index: 1000;
   height: 64px;
 
-  .bottom-nav-item {
+  &-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-decoration: none;
-    color: rgba(0, 0, 0, 0.7);
+    color: $text-dark;
     padding: 4px 0;
     min-width: 72px;
     transition: all 0.2s ease;
@@ -162,7 +167,7 @@ $header-height: 64px;
     }
   }
 
-  .bottom-nav-label {
+  &-label {
     font-size: 12px;
     font-weight: 500;
   }
@@ -173,14 +178,7 @@ $header-height: 64px;
   flex: 1;
 }
 
-// Media queries
-@media screen and (max-width: 599px) {
-  .main-content {
-    padding: 16px;
-    padding-bottom: 80px;
-  }
-}
-
+// Toggle sidenav
 .toggle-sidenav {
   position: absolute;
   top: 7%;
@@ -190,12 +188,22 @@ $header-height: 64px;
   height: 22px;
   background-color: rgb(255, 255, 255) !important;
   border-radius: 24px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  @include box-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
   z-index: 909;
+
   mat-icon {
     font-size: 16px;
   }
+
   &.expanded {
     left: 172px;
+  }
+}
+
+// Media queries
+@media screen and (max-width: 599px) {
+  .main-content {
+    padding: 16px;
+    padding-bottom: 80px;
   }
 }

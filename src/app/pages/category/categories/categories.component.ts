@@ -30,7 +30,7 @@ export class CategoriesComponent {
     { id: 11, name: 'Asian', description: 'Asian cuisine', imageUrl: this.pancake, thumbnailUrl: this.pancake, createdAt: new Date(), updatedAt: new Date() },
     { id: 12, name: 'Mexican', description: 'Mexican specialties', imageUrl: this.pancake, thumbnailUrl: this.pancake, createdAt: new Date(), updatedAt: new Date() }
   ];
-  private dialog = inject(MatDialog);
+  readonly dialog = inject(MatDialog);
 
   categories = signal<Category[]>(this.CATEGORIES);
   searchQuery = signal<string>('');
@@ -62,8 +62,9 @@ export class CategoriesComponent {
   }
 
   openDialog(): void {
-    this.dialog.open(CategoryDetailsComponent, {}).afterClosed().subscribe(() => {
-          });
+    this.dialog.open(CategoryDetailsComponent, {
+      // width: '250px'
+    })
   }
 
   viewCategory(category: Category): void {
