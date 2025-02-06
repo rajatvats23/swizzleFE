@@ -1,51 +1,28 @@
+// navigation.config.ts
 export interface NavItem {
-    label: string;
-    icon: string;
-    route: string;
-  }
-  
-  export interface NavigationConfig {
-    items: NavItem[];
-    appTitle: string;
-    theme?: {
-      primaryColor?: string;
-      secondaryColor?: string;
-      backgroundColor?: string;
-    };
-  }
-  
-  export const navigationConfig: NavigationConfig = {
-    appTitle: 'Dashboard',
-    items: [
-      { 
-        label: 'Dashboard', 
-        icon: 'dashboard', 
-        route: '/dashboard',
-      },
-      { 
-        label: 'Admins', 
-        icon: 'shield_person', 
-        route: '/admins',
-      },
-      { 
-        label: 'Category', 
-        icon: 'category', 
-        route: '/category',
-      },
-      { 
-        label: 'Settings', 
-        icon: 'settings', 
-        route: '/settings',
-      },
-      { 
-        label: 'Notifications', 
-        icon: 'notifications', 
-        route: '/notifications',
-      }
-    ],
-    theme: {
-      primaryColor: '#1976d2',
-      secondaryColor: '#424242',
-      backgroundColor: 'whitesmoke'
-    }
-  };
+  label: string;
+  icon: string;
+  route: string;
+  disabled?: boolean;
+}
+
+export interface NavigationConfig {
+  items: NavItem[];
+  appTitle: string;
+}
+
+export const navigationConfig: NavigationConfig = {
+  appTitle: 'Dashboard',
+  items: [
+    { label: 'Category', icon: 'category', route: '/category' },
+    { label: 'Product', icon: 'inventory_2', route: '/product' },
+    { label: 'Add-ons', icon: 'add_circle', route: '/add-ons' },
+    { label: 'Orders', icon: 'shopping_cart', route: '/orders' },
+    { label: 'Branches', icon: 'store', route: '/branches' },
+    { label: 'Promocodes', icon: 'local_offer', route: '/promocodes' },
+    { label: 'Fleet Management', icon: 'local_shipping', route: '/fleet' },
+    { label: 'Order Tracking', icon: 'location_on', route: '/tracking' },
+    { label: 'Customers', icon: 'people', route: '/customers' },
+    { label: 'Settings', icon: 'settings', route: '/settings' }
+  ]
+};

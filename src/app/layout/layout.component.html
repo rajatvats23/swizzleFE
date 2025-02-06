@@ -24,13 +24,14 @@
     <mat-nav-list>
       @for (item of navItems(); track item.route) {
       <mat-list-item
+      class="nav-item"
         [routerLink]="item.route"
         routerLinkActive="active"
         [matTooltip]="!isExpanded() ? item.label : ''"
         [matTooltipPosition]="'right'"
         [matTooltipShowDelay]="500"
       >
-        <mat-icon class="nav-icon material-symbols-outlined" matListItemIcon>
+        <mat-icon class="material-symbols-outlined" matListItemIcon>
           {{ item.icon }}
         </mat-icon>
         @if (isExpanded()) {
@@ -72,7 +73,7 @@
 
     @if (isHandset()) {
     <nav class="bottom-nav">
-      @for (item of navItems(); track item.route) {
+      @for (item of navItems().slice(0,5); track item.route) {
       <a
         class="bottom-nav-item"
         [routerLink]="item.route"
