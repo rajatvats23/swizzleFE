@@ -21,10 +21,10 @@
         *ngIf="!isExpanded()"
       />
     </div>
-    <mat-nav-list>
+    <mat-nav-list class="nav-list">
       @for (item of navItems(); track item.route) {
       <mat-list-item
-      class="nav-item"
+        class="nav-item"
         [routerLink]="item.route"
         routerLinkActive="active"
         [matTooltip]="!isExpanded() ? item.label : ''"
@@ -39,6 +39,15 @@
         }
       </mat-list-item>
       }
+    </mat-nav-list>
+    <mat-nav-list>
+      <div class="spacer"></div>
+      <mat-list-item class="nav-item" (click)="authService.logout()">
+        <mat-icon class="material-symbols-outlined" matListItemIcon
+          >logout</mat-icon
+        >
+        <span class="nav-label" matListItemTitle>Logout</span>
+      </mat-list-item>
     </mat-nav-list>
   </mat-drawer>
   <mat-drawer-content class="drawer-content">
@@ -89,12 +98,16 @@
 </mat-drawer-container>
 @if (!isHandset() && showSidenavToggle() && drawer.opened) {
 <button
-        mat-icon-button
-        [ngClass]="isExpanded() ? 'toggle-sidenav expanded' : 'toggle-sidenav'"
-        (click)="toggleSidenavView()"
-      >
-        <mat-icon class="material-symbols-outlined">
-          {{ isExpanded() ? "keyboard_double_arrow_left" : "keyboard_double_arrow_right" }}
-        </mat-icon>
-      </button>
-    }
+  mat-icon-button
+  [ngClass]="isExpanded() ? 'toggle-sidenav expanded' : 'toggle-sidenav'"
+  (click)="toggleSidenavView()"
+>
+  <mat-icon class="material-symbols-outlined">
+    {{
+      isExpanded()
+        ? "keyboard_double_arrow_left"
+        : "keyboard_double_arrow_right"
+    }}
+  </mat-icon>
+</button>
+}

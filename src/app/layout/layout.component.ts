@@ -6,6 +6,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Subject } from 'rxjs';
 import { navigationConfig, NavItem } from '../config/navigation.config';
 import { SharedModule } from '../shared/shared.module';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-layout',
@@ -28,6 +29,7 @@ export class LayoutComponent {
   navItems = signal<NavItem[]>(navigationConfig.items);
   appTitle = navigationConfig.appTitle;
   isExpanded = signal(true);
+  authService = inject(AuthService);
   
   constructor() {
     inject(BreakpointObserver)
