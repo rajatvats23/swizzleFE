@@ -64,6 +64,9 @@ $theme: mat.define-light-theme((
     primary: $primary,
     accent: $accent,
   ),
+  density: (
+    scale: -4
+  )
 ));
 
 // Apply the theme to all Angular Material components

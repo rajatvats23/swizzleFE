@@ -1,5 +1,13 @@
 @use '@angular/material' as mat;
 
+$compact-form-field: mat.define-theme(
+  (
+    density: (
+      scale: -4
+    )
+  )
+);
+
 html {
   @include mat.theme((
     color: (
@@ -10,6 +18,10 @@ html {
     typography: Roboto,
     density: 0,
   ));
+}
+
+:root{
+  @include mat.form-field-density($compact-form-field)
 }
 
 html, body { height: 100%; }

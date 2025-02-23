@@ -24,6 +24,7 @@ $border-light: 0.5px solid rgba(0, 0, 0, 0.1);
 
 // Drawer
 .drawer {
+  box-shadow: 0px 0px 8px 3px #808080b5;
   background-color: $primary-color;
   padding-top: 16px;
   padding-left: 0;
@@ -77,10 +78,18 @@ $border-light: 0.5px solid rgba(0, 0, 0, 0.1);
   &:hover {
     background-color: white;
     border-radius: 0 !important;
+    font-size: larger;
 
     mat-icon {
       color: $text-darker !important;
     }
+  }
+}
+
+.padding-fix {
+  padding: 7px !important;
+  mat-icon {
+    font-size: 24px !important;
   }
 }
 

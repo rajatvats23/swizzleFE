@@ -17,19 +17,20 @@
       <img
         src="assets/images/logo_light.svg"
         alt="Logo"
-        height="24"
+        height="32"
         *ngIf="!isExpanded()"
       />
     </div>
     <mat-nav-list class="nav-list">
       @for (item of navItems(); track item.route) {
       <mat-list-item
-        class="nav-item"
-        [routerLink]="item.route"
-        routerLinkActive="active"
-        [matTooltip]="!isExpanded() ? item.label : ''"
-        [matTooltipPosition]="'right'"
-        [matTooltipShowDelay]="500"
+      class="nav-item"
+      [routerLink]="item.route"
+      routerLinkActive="active"
+      [ngClass]="{'padding-fix': !isExpanded()}"
+      [matTooltip]="!isExpanded() ? item.label : ''"
+      matTooltipPosition="right"
+      matTooltipShowDelay="500"
       >
         <mat-icon class="material-symbols-outlined" matListItemIcon>
           {{ item.icon }}
@@ -42,11 +43,13 @@
     </mat-nav-list>
     <mat-nav-list>
       <div class="spacer"></div>
-      <mat-list-item class="nav-item" (click)="authService.logout()">
+      <mat-list-item [ngClass]="{'padding-fix': !isExpanded()}" class="nav-item" (click)="authService.logout()">
         <mat-icon class="material-symbols-outlined" matListItemIcon
           >logout</mat-icon
         >
-        <span class="nav-label" matListItemTitle>Logout</span>
+        @if (isExpanded()) {
+          <span class="nav-label" matListItemTitle>Logout</span>
+        }
       </mat-list-item>
     </mat-nav-list>
   </mat-drawer>

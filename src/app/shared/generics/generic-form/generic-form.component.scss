@@ -1,0 +1,39 @@
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  .grid-1 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  @media (max-width: 768px) {
+    .grid-2 {
+      grid-template-columns: 1fr;
+    }
+  }
+  .form-field {
+    margin-bottom: 1rem;
+  }
+  .button-group {
+    margin-top: 1rem;
+    display: flex;
+    gap: 1rem;
+  }
+  .radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 1rem 0;
+  }
+  .spinner {
+    margin-right: 0.5rem;
+  }
+  mat-form-field {
+    width: 100%;
+  }
+
+  .text-suffix {
+    padding-right: 5px;
+  }
