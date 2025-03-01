@@ -1,55 +1,61 @@
 <mat-card class="categories-container">
-    <mat-card-header>
-      <mat-form-field appearance="outline" class="search-field">
-        <mat-label>Search Categories</mat-label>
-        <input matInput 
-               [ngModel]="searchQuery()"
-               (ngModelChange)="updateSearch($event)"
-               placeholder="Search...">
-        <mat-icon matPrefix>search</mat-icon>
-      </mat-form-field>
-      <button mat-raised-button 
-              color="primary" 
-              class="add-button"
-              (click)="openDialog()">
-        <mat-icon>add</mat-icon>
-        Add Category
-      </button>
-    </mat-card-header>
+  <mat-card-header>
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search Categories</mat-label>
+      <input matInput 
+             [ngModel]="searchQuery()"
+             (ngModelChange)="updateSearch($event)"
+             placeholder="Search...">
+      <mat-icon matPrefix>search</mat-icon>
+    </mat-form-field>
+    <button mat-raised-button 
+            color="primary" 
+            class="add-button"
+            (click)="openDialog()">
+      <mat-icon>add</mat-icon>
+      Add Category
+    </button>
+  </mat-card-header>
 
-    <mat-card-content>
-      <div class="categories-grid">
-        @for (category of displayedCategories(); track category.id) {
-          <mat-card class="category-card">
-            <div class="category-actions">
-              <button mat-icon-button (click)="viewCategory(category)">
-                <mat-icon class="material-symbols-outlined">visibility</mat-icon>
-              </button>
-              <button mat-icon-button (click)="editCategory(category)">
-                <mat-icon class="material-symbols-outlined">edit</mat-icon>
-              </button>
-              <button mat-icon-button color="warn" (click)="deleteCategory(category)">
-                <mat-icon class="material-symbols-outlined">delete</mat-icon>
-              </button>
-            </div>
-            <img [src]="category.imageUrl" [alt]="category.name">
-            <mat-card-content class="category-details">
-              <h3>{{category.name}}</h3>
-              <p>{{category.description}}</p>
-            </mat-card-content>
-          </mat-card>
-        }
-      </div>
-    </mat-card-content>
+  <mat-card-content>
+    @if (loading()) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
+    <div class="categories-grid">
+      @for (category of displayedCategories(); track category.id) {
+        <mat-card class="category-card">
+          <div class="category-actions">
+            <button mat-icon-button (click)="openDialog(category)">
+              <mat-icon class="material-symbols-outlined">edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteCategory(category)">
+              <mat-icon class="material-symbols-outlined">delete</mat-icon>
+            </button>
+          </div>
+          <img [src]="category.imageUrl" [alt]="category.name">
+          <mat-card-content class="category-details">
+            <h3>{{category.name}}</h3>
+            <p>{{category.description}}</p>
+          </mat-card-content>
+        </mat-card>
+      }
+      @if (displayedCategories().length === 0) {
+        <div class="no-results">
+          <mat-icon>search_off</mat-icon>
+          <p>No categories found</p>
+        </div>
+      }
+    </div>
+  </mat-card-content>
 
-    <mat-card-footer>
-      <mat-paginator
+  <mat-card-footer>
+    <mat-paginator
       class="paginator"
-        [length]="filteredCategories().length"
-        [pageSize]="pageSize()"
-        [pageSizeOptions]="[6, 12, 24]"
-        (page)="handlePageEvent($event)"
-        aria-label="Select page">
-      </mat-paginator>
-    </mat-card-footer>
-  </mat-card>
+      [length]="filteredCategories().length"
+      [pageSize]="pageSize()"
+      [pageSizeOptions]="[6, 12, 24]"
+      (page)="handlePageEvent($event)"
+      aria-label="Select page">
+    </mat-paginator>
+  </mat-card-footer>
+</mat-card>

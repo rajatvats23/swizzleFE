@@ -1,15 +1,15 @@
-// dialog.component.ts
 import { CommonModule } from "@angular/common";
-import { Component, OnInit } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { MatDialogRef } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { MatIconModule } from "@angular/material/icon";
+import { Category } from "../../../shared/interfaces/category.interface";
 
 @Component({
-  selector: "app-dialog",
+  selector: "app-category-details",
   standalone: true,
   imports: [
     CommonModule,
@@ -25,19 +25,30 @@ import { MatIconModule } from "@angular/material/icon";
 export class CategoryDetailsComponent implements OnInit {
   form: FormGroup;
   imagePreview: string | null = null;
+  isEditMode: boolean = false;
 
   constructor(
     private fb: FormBuilder,
-    public dialogRef: MatDialogRef<CategoryDetailsComponent>
+    public dialogRef: MatDialogRef<CategoryDetailsComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: Category | null
   ) {
     this.form = this.fb.group({
       name: ["", [Validators.required, Validators.minLength(3)]],
       description: ["", [Validators.required, Validators.maxLength(500)]],
-      image: ["", [Validators.required]],
+      image: [null, this.data ? [] : [Validators.required]]
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.data) {
+      this.isEditMode = true;
+      this.imagePreview = this.data.imageUrl;
+      this.form.patchValue({
+        name: this.data.name,
+        description: this.data.description
+      });
+    }
+  }
 
   onFileSelected(event: Event): void {
     const file = (event.target as HTMLInputElement).files?.[0];
@@ -87,6 +98,15 @@ export class CategoryDetailsComponent implements OnInit {
       return;
     }
 
-    this.dialogRef.close(this.form.value);
+    const formData = new FormData();
+    formData.append('name', this.form.get('name')?.value);
+    formData.append('description', this.form.get('description')?.value);
+    
+    const imageFile = this.form.get('image')?.value;
+    if (imageFile) {
+      formData.append('image', imageFile);
+    }
+
+    this.dialogRef.close(formData);
   }
 }

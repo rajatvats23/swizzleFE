@@ -1,20 +1,33 @@
-import { ApplicationConfig } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { provideRouter, withComponentInputBinding, withViewTransitions } from '@angular/router';
 import { routes } from './app.routes';
+import { provideClientHydration } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { HTTP_INTERCEPTORS, provideHttpClient } from '@angular/common/http';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { AuthInterceptor } from './services/http-interceptor.service';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideRouter(routes),
+    provideRouter(
+      routes,
+      withComponentInputBinding(),
+      withViewTransitions()
+    ),
     provideAnimations(),
-    provideHttpClient(), provideAnimationsAsync(),
+    provideClientHydration(),
+    provideHttpClient(
+      withInterceptorsFromDi()
+    ),
+    importProvidersFrom(
+      MatDialogModule,
+      MatSnackBarModule
+    ),
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
-      useValue: { appearance: 'outline', subscriptSizing: 'dynamic'}
+      useValue: { appearance: 'outline', subscriptSizing: 'dynamic' }
     },
     {
       provide: HTTP_INTERCEPTORS,
@@ -22,4 +35,4 @@ export const appConfig: ApplicationConfig = {
       multi: true
     }
   ]
-}
+};

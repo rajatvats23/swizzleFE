@@ -1,44 +1,56 @@
 import { Routes } from '@angular/router';
-import { navigationConfig } from './config/navigation.config';
+import { LayoutComponent } from './layout/layout.component';
 import { authGuard, nonAuthGuard } from './guard/auth.guard';
+import { AuthLandingComponent } from './features/auth/auth-landing.component';
 
 export const routes: Routes = [
   {
     path: 'auth',
-    canActivateChild: [nonAuthGuard], // Changed from canActivate to canActivateChild
+    component: AuthLandingComponent,
+    canActivate: [nonAuthGuard],
     children: [
+      {
+        path: '',
+        redirectTo: 'login',
+        pathMatch: 'full'
+      },
       {
         path: 'login',
         loadComponent: () => import('./features/auth/login.component')
-          .then(m => m.LoginComponent)
+          .then(m => m.LoginComponent),
+        title: 'Login'
       },
       {
         path: 'forgot-password',
         loadComponent: () => import('./features/auth/forgot-password.component')
-          .then(m => m.ForgotPasswordComponent)
+          .then(m => m.ForgotPasswordComponent),
+        title: 'Forgot Password'
       },
       {
         path: 'reset-password',
         loadComponent: () => import('./features/auth/reset-password.component')
-          .then(m => m.ResetPasswordComponent)
+          .then(m => m.ResetPasswordComponent),
+        title: 'Reset Password'
       }
     ]
   },
   {
     path: '',
-    canActivateChild: [authGuard], // Changed from canActivate to canActivateChild
+    component: LayoutComponent,
+    canActivate: [authGuard],
     children: [
       {
         path: '',
-        redirectTo: navigationConfig.items[0].route.substring(1),
+        redirectTo: 'dashboard',
         pathMatch: 'full'
       },
       {
         path: 'dashboard',
         loadComponent: () => import('./features/dashboard/dashboard.component')
           .then(m => m.DashboardComponent),
-        title: 'Dashboard' // Added titles for better debugging
+        title: 'Dashboard'
       },
+      // Other routes remain the same
       {
         path: 'admins',
         loadComponent: () => import('./features/admins/admins.component')
@@ -103,6 +115,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'auth/login' // Made the redirect more specific
+    redirectTo: 'auth/login'
   }
 ];

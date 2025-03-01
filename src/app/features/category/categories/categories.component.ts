@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, computed, inject, signal } from "@angular/core";
+import { Component, computed, inject, signal, OnInit } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { MatInputModule } from "@angular/material/input";
@@ -7,32 +7,25 @@ import { PageEvent } from "@angular/material/paginator";
 import { Category } from "../../../shared/interfaces/category.interface";
 import { SharedModule } from "../../../shared/shared.module";
 import { CategoryDetailsComponent } from "../category-details/category-details.component";
+import { finalize } from "rxjs";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { CategoryService } from "../../../services/category.service";
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-category',
-  imports: [CommonModule, SharedModule, FormsModule, ReactiveFormsModule, MatInputModule, MatDialogModule],
+  standalone: true,
+  imports: [CommonModule, SharedModule, FormsModule, ReactiveFormsModule, MatInputModule, MatDialogModule, MatProgressBarModule],
   templateUrl: './categories.component.html',
   styleUrl: './categories.component.scss',
 })
-export class CategoriesComponent {
-  pancake: string = 'assets/images/food-placeholder.jpg';
-  CATEGORIES: Category[] = [
-    { id: 1, name: 'Pizzas', description: 'Italian hand-tossed pizzas', imageUrl: 'assets/images/burger.avif', thumbnailUrl: 'assets/images/burger.avif', createdAt: new Date(), updatedAt: new Date() },
-    { id: 2, name: 'Desserts', description: 'Sweet treats and confections', imageUrl: 'assets/images/dosa1.avif', thumbnailUrl: 'assets/images/burger.avif', createdAt: new Date(), updatedAt: new Date() },
-    { id: 3, name: 'Beverages', description: 'Refreshing drinks', imageUrl: 'assets/images/pizza.avif', thumbnailUrl: 'assets/images/burger.avif', createdAt: new Date(), updatedAt: new Date() },
-    { id: 4, name: 'Snacks', description: 'Quick bites and appetizers', imageUrl: 'assets/images/pizza.avif', thumbnailUrl: 'assets/images/burger.avif', createdAt: new Date(), updatedAt: new Date() },
-    { id: 5, name: 'Main Course', description: 'Hearty main dishes', imageUrl: 'assets/images/pizza3.avif', thumbnailUrl: 'assets/images/burger.avif', createdAt: new Date(), updatedAt: new Date() },
-    { id: 6, name: 'Salads', description: 'Fresh and healthy salads', imageUrl: 'assets/images/rice1.avif', thumbnailUrl: 'assets/images/burger.avif', createdAt: new Date(), updatedAt: new Date() },
-    { id: 7, name: 'Pasta', description: 'Italian pasta dishes', imageUrl: 'assets/images/roll1.avif', thumbnailUrl: 'assets/images/burger.avif', createdAt: new Date(), updatedAt: new Date() },
-    { id: 8, name: 'Soups', description: 'Warm and comforting soups', imageUrl: 'assets/images/roll2.avif', thumbnailUrl: 'assets/images/burger.avif', createdAt: new Date(), updatedAt: new Date() },
-    { id: 9, name: 'Sandwiches', description: 'Fresh sandwiches', imageUrl: 'assets/images/pancake.svg', thumbnailUrl: 'assets/images/burger.avif', createdAt: new Date(), updatedAt: new Date() },
-    { id: 10, name: 'Breakfast', description: 'Morning favorites', imageUrl: 'assets/images/burger.avif', thumbnailUrl: 'assets/images/burger.avif', createdAt: new Date(), updatedAt: new Date() },
-    { id: 11, name: 'Asian', description: 'Asian cuisine', imageUrl: 'assets/images/burger.avif', thumbnailUrl: 'assets/images/burger.avif', createdAt: new Date(), updatedAt: new Date() },
-    { id: 12, name: 'Mexican', description: 'Mexican specialties', imageUrl: 'assets/images/burger.avif', thumbnailUrl: 'assets/images/burger.avif', createdAt: new Date(), updatedAt: new Date() }
-  ];
-  readonly dialog = inject(MatDialog);
+export class CategoriesComponent implements OnInit {
+  private categoryService = inject(CategoryService);
+  private dialog = inject(MatDialog);
+  private snackBar = inject(MatSnackBar);
 
-  categories = signal<Category[]>(this.CATEGORIES);
+  loading = signal<boolean>(false);
+  categories = signal<Category[]>([]);
   searchQuery = signal<string>('');
   currentPage = signal<number>(0);
   pageSize = signal<number>(12);
@@ -51,9 +44,23 @@ export class CategoriesComponent {
     return filtered.slice(start, start + this.pageSize());
   });
 
+  ngOnInit(): void {
+    this.loadCategories();
+  }
+
+  loadCategories(): void {
+    this.loading.set(true);
+    this.categoryService.getCategories()
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (categories) => this.categories.set(categories),
+        error: () => this.showError('Failed to load categories')
+      });
+  }
+
   updateSearch(query: string): void {
     this.searchQuery.set(query);
-    this.currentPage.set(0); // Reset to first page on search
+    this.currentPage.set(0);
   }
 
   handlePageEvent(event: PageEvent): void {
@@ -61,21 +68,73 @@ export class CategoriesComponent {
     this.pageSize.set(event.pageSize);
   }
 
-  openDialog(): void {
-    this.dialog.open(CategoryDetailsComponent, {
-      // width: '250px'
-    })
+  openDialog(category?: Category): void {
+    const dialogRef = this.dialog.open(CategoryDetailsComponent, {
+      data: category,
+      width: '500px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (category) {
+          this.updateCategory(category.id, result);
+        } else {
+          this.addCategory(result);
+        }
+      }
+    });
   }
 
-  viewCategory(category: Category): void {
-    // Implement view logic
+  private addCategory(formData: FormData): void {
+    this.loading.set(true);
+    this.categoryService.addCategory(formData)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (newCategory) => {
+          this.categories.update(cats => [...cats, newCategory]);
+          this.showSuccess('Category added successfully');
+        },
+        error: () => this.showError('Failed to add category')
+      });
   }
 
-  editCategory(category: Category): void {
-    // Implement edit logic
+  private updateCategory(id: number, formData: FormData): void {
+    this.loading.set(true);
+    this.categoryService.updateCategory(id, formData)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (updatedCategory) => {
+          this.categories.update(cats =>
+            cats.map(cat => cat.id === id ? updatedCategory : cat)
+          );
+          this.showSuccess('Category updated successfully');
+        },
+        error: () => this.showError('Failed to update category')
+      });
   }
 
   deleteCategory(category: Category): void {
-    // Implement delete logic
+    if (confirm(`Are you sure you want to delete ${category.name}?`)) {
+      this.loading.set(true);
+      this.categoryService.deleteCategory(category.id)
+        .pipe(finalize(() => this.loading.set(false)))
+        .subscribe({
+          next: () => {
+            this.categories.update(cats =>
+              cats.filter(cat => cat.id !== category.id)
+            );
+            this.showSuccess('Category deleted successfully');
+          },
+          error: () => this.showError('Failed to delete category')
+        });
+    }
+  }
+
+  private showSuccess(message: string): void {
+    this.snackBar.open(message, 'Close', { duration: 3000 });
+  }
+
+  private showError(message: string): void {
+    this.snackBar.open(message, 'Close', { duration: 3000, panelClass: 'error-snackbar' });
   }
 }

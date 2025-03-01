@@ -1,0 +1,71 @@
+// Font family variables
+$josefin-sans: 'Josefin Sans', sans-serif;
+$poppins: 'Poppins', sans-serif;
+$roboto: 'Roboto', sans-serif;
+
+// Font mixins for specific sizes
+@mixin font-xs($weight) {
+  font-family: $josefin-sans;
+  font-size: 0.5rem; // 8px
+  font-weight: $weight;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+@mixin font-base($weight) {
+  font-family: $josefin-sans;
+  font-size: 1rem; // 16px
+  font-weight: $weight;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+@mixin font-xl($weight) {
+  font-family: $josefin-sans;
+  font-size: 2rem; // 32px
+  font-weight: $weight;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+@mixin font-xxl($weight) {
+  font-family: $josefin-sans;
+  font-size: 3rem; // 48px
+  font-weight: $weight;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+// Special mixins for specific elements
+@mixin heading-welcome {
+  font-family: $josefin-sans;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 24px;
+  letter-spacing: 0%;
+}
+
+@mixin subheading-signin {
+  font-family: $josefin-sans;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 16px;
+  letter-spacing: 0%;
+}
+
+@mixin button-text {
+  font-family: $josefin-sans;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 14px;
+  letter-spacing: 0%;
+  text-align: center;
+}
+
+@mixin forgot-password-text {
+  font-family: $poppins;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 28px;
+  letter-spacing: 0%;
+}

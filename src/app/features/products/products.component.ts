@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { FormConfig, GenericFormComponent } from '../../shared/generics/generic-form/generic-form.component';
+import { GenericFormComponent } from '../../shared/generics/generic-form/generic-form.component';
+import { FormConfig } from '../../shared/generics/models/form.model';
 
 @Component({
   selector: 'app-products',
@@ -58,7 +59,8 @@ export class ProductsComponent {
         required: true,
         appearance: 'outline',
         prefix: 'attach_money',
-        suffix: '.00'
+        suffix: true,
+        textSuffix: '.00'
       },
       {
         type: 'date',

@@ -1,37 +1,3 @@
-export interface FormField {
-  type: 'text' | 'number' | 'email' | 'password' | 'select' | 'radio' | 'checkbox' | 'textarea' | 'date' | 'file' | 'tel' | 'url' | 'search' | 'time' | 'color';
-  name: string;
-  label: string;
-  placeholder?: string;
-  value?: any;
-  required?: boolean;
-  options?: { value: any; label: string }[];
-  validations?: {
-    minLength?: number;
-    maxLength?: number;
-    pattern?: string;
-    min?: number;
-    max?: number;
-  };
-  disabled?: boolean;
-  hint?: string;
-  appearance?: 'fill' | 'outline';
-  prefix?: string;
-  suffix?: string;
-}
-
-export interface FormConfig {
-  fields: FormField[];
-  buttons: {
-    submit?: boolean;
-    cancel?: boolean;
-    close?: boolean;
-    done?: boolean;
-    custom?: { label: string; action: string; color?: string }[];
-  };
-  columnCount?: 1 | 2;
-}
-
 import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -45,6 +11,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { FormConfig } from '../models/form.model';
 
 @Component({
   selector: 'app-generic-form',
@@ -134,6 +101,10 @@ export class GenericFormComponent {
   showError(fieldName: string): boolean {
     const control = this.form.get(fieldName);
     return control ? (control.invalid && (control.dirty || control.touched)) : false;
+  }
+
+  onSuffixClick(fieldName: string): void {
+    console.log(fieldName)
   }
 
   getErrorMessage(fieldName: string): string {
