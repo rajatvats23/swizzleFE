@@ -16,19 +16,19 @@ export const routes: Routes = [
       },
       {
         path: 'login',
-        loadComponent: () => import('./features/auth/login.component')
+        loadComponent: () => import('./features/auth/auth.component')
           .then(m => m.LoginComponent),
         title: 'Login'
       },
       {
         path: 'forgot-password',
-        loadComponent: () => import('./features/auth/forgot-password.component')
+        loadComponent: () => import('./features/auth/auth.component')
           .then(m => m.ForgotPasswordComponent),
         title: 'Forgot Password'
       },
       {
         path: 'reset-password',
-        loadComponent: () => import('./features/auth/reset-password.component')
+        loadComponent: () => import('./features/auth/auth.component')
           .then(m => m.ResetPasswordComponent),
         title: 'Reset Password'
       }

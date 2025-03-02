@@ -1,4 +1,4 @@
-// auth-landing.component.ts
+// src/app/features/auth/auth-landing.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
@@ -17,7 +17,7 @@ import { RouterOutlet } from '@angular/router';
       </div>
     </div>
   `,
-  styles: `
+  styles: [`
     .auth-container {
       width: 100%;
       min-height: 100vh;
@@ -72,8 +72,6 @@ import { RouterOutlet } from '@angular/router';
         padding: 1.5rem;
       }
     }
-  `
+  `]
 })
-export class AuthLandingComponent {
-  // Background image is now set through CSS for better control
-}
+export class AuthLandingComponent {}
