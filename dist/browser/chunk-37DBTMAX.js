@@ -1,0 +1,1 @@
+import{Mb as r,Nb as o,hc as a,pb as n}from"./chunk-K3BUIVDM.js";var i=class t{static \u0275fac=function(e){return new(e||t)};static \u0275cmp=n({type:t,selectors:[["app-order-tracking"]],decls:2,vars:0,template:function(e,p){e&1&&(r(0,"p"),a(1,"order-tracking works!"),o())},encapsulation:2})};export{i as OrderTrackingComponent};

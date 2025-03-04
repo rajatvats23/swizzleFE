@@ -1,0 +1,1 @@
+import{Mb as n,Nb as s,hc as m,pb as t}from"./chunk-K3BUIVDM.js";var p=class o{static \u0275fac=function(e){return new(e||o)};static \u0275cmp=t({type:o,selectors:[["app-promocodes"]],decls:2,vars:0,template:function(e,r){e&1&&(n(0,"p"),m(1,"promocodes works!"),s())},encapsulation:2})};export{p as PromocodesComponent};

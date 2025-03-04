@@ -1,0 +1,1 @@
+import{Mb as s,Nb as n,hc as m,pb as o}from"./chunk-K3BUIVDM.js";var r=class t{static \u0275fac=function(e){return new(e||t)};static \u0275cmp=o({type:t,selectors:[["app-customers"]],decls:2,vars:0,template:function(e,a){e&1&&(s(0,"p"),m(1,"customers works!"),n())},encapsulation:2})};export{r as CustomersComponent};
