@@ -1,1 +1,0 @@
-import{Ib as t,Jb as s,_b as a,mb as o}from"./chunk-X47PMSGC.js";var d=class n{static \u0275fac=function(e){return new(e||n)};static \u0275cmp=o({type:n,selectors:[["app-addons"]],decls:2,vars:0,template:function(e,i){e&1&&(t(0,"p"),a(1,"addons works!"),s())},encapsulation:2})};export{d as AddonsComponent};

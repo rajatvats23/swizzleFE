@@ -1,1 +1,0 @@
-import{mb as a}from"./chunk-X47PMSGC.js";var t=class e{static \u0275fac=function(o){return new(o||e)};static \u0275cmp=a({type:e,selectors:[["app-dashboard"]],decls:0,vars:0,template:function(o,s){},encapsulation:2})};export{t as DashboardComponent};

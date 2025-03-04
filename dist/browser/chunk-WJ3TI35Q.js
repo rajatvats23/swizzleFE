@@ -1,1 +1,0 @@
-import{Ib as a,Jb as m,_b as o,mb as n}from"./chunk-X47PMSGC.js";var p=class t{static \u0275fac=function(e){return new(e||t)};static \u0275cmp=n({type:t,selectors:[["app-fleet-management"]],decls:2,vars:0,template:function(e,s){e&1&&(a(0,"p"),o(1,"fleet-management works!"),m())},encapsulation:2})};export{p as FleetManagementComponent};
