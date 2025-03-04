@@ -1,60 +1,137 @@
 <mat-card class="categories-container">
   <mat-card-header>
-    <mat-form-field appearance="outline" class="search-field">
-      <mat-label>Search Categories</mat-label>
-      <input matInput 
-             [ngModel]="searchQuery()"
-             (ngModelChange)="updateSearch($event)"
-             placeholder="Search...">
-      <mat-icon matPrefix>search</mat-icon>
-    </mat-form-field>
-    <button mat-raised-button 
-            color="primary" 
-            class="add-button"
-            (click)="openDialog()">
-      <mat-icon>add</mat-icon>
-      Add Category
-    </button>
+    <div class="header-controls">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search Categories</mat-label>
+        <input matInput [ngModel]="searchQuery()" (ngModelChange)="updateSearch($event)" placeholder="Search...">
+        <mat-icon matPrefix>search</mat-icon>
+      </mat-form-field>
+
+      @if (!responsiveService.isMobilePortrait()) {
+        <div class="view-controls">
+          <mat-button-toggle-group [value]="viewMode()" (change)="setViewMode($event.value)">
+            <mat-button-toggle value="grid">
+              <mat-icon class="material-symbols-outlined">grid_view</mat-icon>
+            </mat-button-toggle>
+            <mat-button-toggle value="table">
+              <mat-icon class="material-symbols-outlined">view_list</mat-icon>
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+      }
+
+      <button 
+        mat-raised-button 
+        color="primary" 
+        class="add-button" 
+        (click)="openDialog()"
+        [attr.aria-label]="responsiveService.isMobilePortrait() ? 'Add' : 'Add Category'">
+        <mat-icon>add</mat-icon>
+        @if (!responsiveService.isMobilePortrait()) {
+          <span>Add Category</span>
+        }
+      </button>
+    </div>
   </mat-card-header>
 
   <mat-card-content>
     @if (loading()) {
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     }
-    <div class="categories-grid">
-      @for (category of displayedCategories(); track category.id) {
-        <mat-card class="category-card">
-          <div class="category-actions">
-            <button mat-icon-button (click)="openDialog(category)">
-              <mat-icon class="material-symbols-outlined">edit</mat-icon>
-            </button>
-            <button mat-icon-button color="warn" (click)="deleteCategory(category)">
-              <mat-icon class="material-symbols-outlined">delete</mat-icon>
-            </button>
+
+    <!-- Grid View (Mobile or when grid view is selected) -->
+    @if (viewMode() === 'grid' || responsiveService.isMobilePortrait()) {
+      <div class="categories-grid">
+        @for (category of displayedCategories(); track category._id) {
+          <mat-card class="category-card">
+            <div class="category-actions">
+              <button mat-icon-button (click)="openDialog(category)" aria-label="Edit category">
+                <mat-icon class="material-symbols-outlined">edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteCategory(category)" aria-label="Delete category">
+                <mat-icon class="material-symbols-outlined">delete</mat-icon>
+              </button>
+            </div>
+            <img [src]="category.imageUrl" [alt]="category.name">
+            <mat-card-content class="category-details">
+              <h3>{{category.name}}</h3>
+              <p>{{category.description | truncate:100}}</p>
+            </mat-card-content>
+          </mat-card>
+        }
+        @if (displayedCategories().length === 0) {
+          <div class="no-results">
+            <mat-icon>search_off</mat-icon>
+            <p>No categories found</p>
           </div>
-          <img [src]="category.imageUrl" [alt]="category.name">
-          <mat-card-content class="category-details">
-            <h3>{{category.name}}</h3>
-            <p>{{category.description}}</p>
-          </mat-card-content>
-        </mat-card>
-      }
-      @if (displayedCategories().length === 0) {
-        <div class="no-results">
-          <mat-icon>search_off</mat-icon>
-          <p>No categories found</p>
-        </div>
-      }
-    </div>
+        }
+      </div>
+    } @else {
+      <!-- Table View (Desktop) -->
+      <div class="table-container">
+        <table mat-table [dataSource]="displayedCategories()" class="categories-table">
+          <!-- Image Column -->
+          <ng-container matColumnDef="image">
+            <th mat-header-cell *matHeaderCellDef>Image</th>
+            <td mat-cell *matCellDef="let category">
+              <img [src]="category.imageUrl" [alt]="category.name" class="table-image">
+            </td>
+          </ng-container>
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <td mat-cell *matCellDef="let category">{{category.name}}</td>
+          </ng-container>
+
+          <!-- Description Column -->
+          <ng-container matColumnDef="description">
+            <th mat-header-cell *matHeaderCellDef>Description</th>
+            <td mat-cell *matCellDef="let category">{{category.description | truncate:150}}</td>
+          </ng-container>
+
+          <!-- Created At Column -->
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef>Created</th>
+            <td mat-cell *matCellDef="let category">{{category.createdAt | date:'medium'}}</td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <td mat-cell *matCellDef="let category">
+              <div class="table-actions">
+                <button mat-icon-button color="primary" (click)="openDialog(category)" aria-label="Edit category">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="deleteCategory(category)" aria-label="Delete category">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+
+        @if (displayedCategories().length === 0) {
+          <div class="no-results">
+            <mat-icon>search_off</mat-icon>
+            <p>No categories found</p>
+          </div>
+        }
+      </div>
+    }
   </mat-card-content>
 
   <mat-card-footer>
-    <mat-paginator
-      class="paginator"
-      [length]="filteredCategories().length"
+    <mat-paginator 
+      class="paginator" 
+      [length]="filteredCategories().length" 
       [pageSize]="pageSize()"
-      [pageSizeOptions]="[6, 12, 24]"
-      (page)="handlePageEvent($event)"
+      [pageSizeOptions]="responsiveService.isMobilePortrait() ? [6, 12] : [6, 12, 24]" 
+      (page)="handlePageEvent($event)" 
       aria-label="Select page">
     </mat-paginator>
   </mat-card-footer>

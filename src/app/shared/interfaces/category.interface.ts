@@ -1,9 +1,26 @@
 export interface Category {
-  id: number;
+  _id: string;
   name: string;
   description: string;
   imageUrl: string;
   thumbnailUrl?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+  updatedBy: string;
+}
+
+export interface CategoryCreate {
+  name: string;
+  description: string;
+  imageUrl: string;
+  thumbnailUrl?: string;
+}
+
+export interface CategoryUpdate {
+  name?: string;
+  description?: string;
+  imageUrl?: string;
+  thumbnailUrl?: string;
 }

@@ -27,7 +27,7 @@
       </mat-form-field>
 
       <div class="image-upload-container" 
-           [class.invalid]="form.get('image')?.touched && form.get('image')?.invalid">
+           [class.invalid]="!imagePreview() && (form.get('imageUrl')?.touched && form.get('imageUrl')?.invalid)">
         <div class="upload-zone" 
              (click)="fileInput.click()" 
              (dragover)="onDragOver($event)"
@@ -37,29 +37,31 @@
                  (change)="onFileSelected($event)"
                  style="display: none">
           
-          @if (!imagePreview) {
+          @if (uploading()) {
+            <div class="upload-progress">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              <p>Uploading image...</p>
+            </div>
+          } @else if (!imagePreview()) {
             <mat-icon>cloud_upload</mat-icon>
             <p>Drag and drop an image or click to select</p>
           } @else {
-            <img [src]="imagePreview" alt="Preview" class="image-preview">
+            <img [src]="imagePreview()" alt="Preview" class="image-preview">
           }
         </div>
         
         @if (!isEditMode) {
-          <mat-error *ngIf="form.get('image')?.touched && form.get('image')?.hasError('required')">
+          <mat-error *ngIf="!imagePreview() && (form.get('imageUrl')?.touched && form.get('imageUrl')?.hasError('required'))">
             Image is required
           </mat-error>
         }
-        <mat-error *ngIf="form.get('image')?.touched && form.get('image')?.hasError('invalidFileType')">
-          Only image files are allowed
-        </mat-error>
       </div>
     </mat-dialog-content>
 
     <mat-dialog-actions align="end">
       <button mat-button type="button" (click)="dialogRef.close()">Cancel</button>
       <button mat-raised-button color="primary" type="submit" 
-              [disabled]="form.invalid">
+              [disabled]="form.invalid || uploading()">
         {{ isEditMode ? 'Update' : 'Create' }}
       </button>
     </mat-dialog-actions>
