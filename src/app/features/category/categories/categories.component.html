@@ -10,11 +10,11 @@
       @if (!responsiveService.isMobilePortrait()) {
         <div class="view-controls">
           <mat-button-toggle-group [value]="viewMode()" (change)="setViewMode($event.value)">
-            <mat-button-toggle value="grid">
-              <mat-icon class="material-symbols-outlined">grid_view</mat-icon>
+            <mat-button-toggle value="grid" aria-label="Grid view">
+              <mat-icon>grid_view</mat-icon>
             </mat-button-toggle>
-            <mat-button-toggle value="table">
-              <mat-icon class="material-symbols-outlined">view_list</mat-icon>
+            <mat-button-toggle value="table" aria-label="Table view">
+              <mat-icon>view_list</mat-icon>
             </mat-button-toggle>
           </mat-button-toggle-group>
         </div>
@@ -46,20 +46,19 @@
           <mat-card class="category-card">
             <div class="category-actions">
               <button mat-icon-button (click)="openDialog(category)" aria-label="Edit category">
-                <mat-icon class="material-symbols-outlined">edit</mat-icon>
+                <mat-icon>edit</mat-icon>
               </button>
               <button mat-icon-button color="warn" (click)="deleteCategory(category)" aria-label="Delete category">
-                <mat-icon class="material-symbols-outlined">delete</mat-icon>
+                <mat-icon>delete</mat-icon>
               </button>
             </div>
-            <img [src]="category.imageUrl" [alt]="category.name">
+            <img [src]="category.imageUrl" [alt]="category.name" loading="lazy">
             <mat-card-content class="category-details">
               <h3>{{category.name}}</h3>
               <p>{{category.description | truncate:100}}</p>
             </mat-card-content>
           </mat-card>
-        }
-        @if (displayedCategories().length === 0) {
+        } @empty {
           <div class="no-results">
             <mat-icon>search_off</mat-icon>
             <p>No categories found</p>
@@ -74,7 +73,7 @@
           <ng-container matColumnDef="image">
             <th mat-header-cell *matHeaderCellDef>Image</th>
             <td mat-cell *matCellDef="let category">
-              <img [src]="category.imageUrl" [alt]="category.name" class="table-image">
+              <img [src]="category.imageUrl" [alt]="category.name" class="table-image" loading="lazy">
             </td>
           </ng-container>
 

@@ -1,11 +1,20 @@
 import { CommonModule } from "@angular/common";
-import { Component, computed, inject, signal, OnInit } from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
+import { Component, DestroyRef, OnInit, computed, inject, signal } from "@angular/core";
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormsModule } from "@angular/forms";
+import { MatButtonModule } from "@angular/material/button";
+import { MatButtonToggleModule } from "@angular/material/button-toggle";
+import { MatCardModule } from "@angular/material/card";
+import { MatDialog, MatDialogModule } from "@angular/material/dialog";
+import { MatIconModule } from "@angular/material/icon";
+import { MatInputModule } from "@angular/material/input";
 import { PageEvent } from "@angular/material/paginator";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { finalize } from "rxjs";
+import { MatPaginatorModule } from "@angular/material/paginator";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
+import { MatTableModule } from "@angular/material/table";
+import { EMPTY, catchError, finalize, switchMap } from "rxjs";
 
-import { SharedModule } from "../../../shared/shared.module";
 import { CategoryDetailsComponent } from "../category-details/category-details.component";
 import { CategoryService } from "../../../services/category.service";
 import { ImageUploadService } from "../../../services/image-upload.service";
@@ -20,41 +29,58 @@ type ViewMode = 'grid' | 'table';
   selector: 'app-categories',
   standalone: true,
   imports: [
-    CommonModule, 
-    SharedModule,
+    CommonModule,
+    FormsModule,
+    MatCardModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatButtonToggleModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatProgressBarModule,
+    MatDialogModule,
+    MatSnackBarModule,
     TruncatePipe
   ],
   templateUrl: './categories.component.html',
   styleUrl: './categories.component.scss',
 })
 export class CategoriesComponent implements OnInit {
-  private categoryService = inject(CategoryService);
-  private imageUploadService = inject(ImageUploadService);
-  private dialog = inject(MatDialog);
-  private snackBar = inject(MatSnackBar);
-  public responsiveService = inject(ResponsiveService);
+  private readonly categoryService = inject(CategoryService);
+  private readonly imageUploadService = inject(ImageUploadService);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
+  private readonly destroyRef = inject(DestroyRef);
+  
+  public readonly responsiveService = inject(ResponsiveService);
 
   // Signals
-  loading = signal<boolean>(false);
-  categories = signal<Category[]>([]);
-  searchQuery = signal<string>('');
-  currentPage = signal<number>(0);
-  pageSize = signal<number>(12);
-  viewMode = signal<ViewMode>('grid');
+  readonly loading = signal<boolean>(false);
+  readonly categories = signal<Category[]>([]);
+  readonly searchQuery = signal<string>('');
+  readonly currentPage = signal<number>(0);
+  readonly pageSize = signal<number>(12);
+  readonly viewMode = signal<ViewMode>(
+    !this.responsiveService.isMobilePortrait() && 
+    !this.responsiveService.isMobileLandScape() ? 'table' : 'grid'
+  );
   
-  // Table columns
-  displayedColumns: string[] = ['image', 'name', 'description', 'createdAt', 'actions'];
+  // Table columns - using readonly to prevent modifications
+  readonly displayedColumns: readonly string[] = ['image', 'name', 'description', 'createdAt', 'actions'];
 
-  // Computed properties
-  filteredCategories = computed(() => {
-    const query = this.searchQuery().toLowerCase();
+  // Computed properties with memoization
+  readonly filteredCategories = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    if (!query) return this.categories();
+    
     return this.categories().filter(category =>
       category.name.toLowerCase().includes(query) ||
-      category.description.toLowerCase().includes(query)
+      (category.description?.toLowerCase().includes(query) || false)
     );
   });
 
-  displayedCategories = computed(() => {
+  readonly displayedCategories = computed(() => {
     const filtered = this.filteredCategories();
     const start = this.currentPage() * this.pageSize();
     return filtered.slice(start, start + this.pageSize());
@@ -62,21 +88,20 @@ export class CategoriesComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadCategories();
-    
-    // Set initial view mode based on device
-    if (!this.responsiveService.isMobilePortrait() && !this.responsiveService.isMobileLandScape()) {
-      this.viewMode.set('table');
-    }
   }
 
   loadCategories(): void {
     this.loading.set(true);
     this.categoryService.getCategories()
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        next: (categories) => this.categories.set(categories),
-        error: (error) => this.showError(`Failed to load categories: ${error.message || 'Unknown error'}`)
-      });
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        catchError(error => {
+          this.showError(`Failed to load categories: ${error.message || 'Unknown error'}`);
+          return EMPTY;
+        }),
+        finalize(() => this.loading.set(false))
+      )
+      .subscribe(categories => this.categories.set(categories));
   }
 
   updateSearch(query: string): void {
@@ -100,42 +125,48 @@ export class CategoriesComponent implements OnInit {
       maxWidth: '100vw'
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        if (category) {
-          this.updateCategory(category._id, result);
-        } else {
-          this.addCategory(result);
-        }
-      }
-    });
-  }
-
-  private addCategory(categoryData: any): void {
-    this.loading.set(true);
-    this.categoryService.addCategory(categoryData)
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        next: (newCategory) => {
-          this.categories.update(cats => [newCategory, ...cats]);
-          this.showSuccess('Category added successfully');
-        },
-        error: (error) => this.showError(`Failed to add category: ${error.message || 'Unknown error'}`)
-      });
-  }
-
-  private updateCategory(id: string, categoryData: any): void {
-    this.loading.set(true);
-    this.categoryService.updateCategory(id, categoryData)
-      .pipe(finalize(() => this.loading.set(false)))
-      .subscribe({
-        next: (updatedCategory) => {
+    dialogRef.afterClosed()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        switchMap(result => {
+          if (!result) return EMPTY;
+          
+          this.loading.set(true);
+          if (category) {
+            return this.categoryService.updateCategory(category._id, result)
+              .pipe(
+                finalize(() => this.loading.set(false)),
+                catchError(error => {
+                  this.showError(`Failed to update category: ${error.message || 'Unknown error'}`);
+                  return EMPTY;
+                })
+              );
+          } else {
+            return this.categoryService.addCategory(result)
+              .pipe(
+                finalize(() => this.loading.set(false)),
+                catchError(error => {
+                  this.showError(`Failed to add category: ${error.message || 'Unknown error'}`);
+                  return EMPTY;
+                })
+              );
+          }
+        })
+      )
+      .subscribe(updatedCategory => {
+        if (!updatedCategory) return;
+        
+        if ('_id' in updatedCategory && this.categories().some(cat => cat._id === updatedCategory._id)) {
+          // Update existing category
           this.categories.update(cats =>
-            cats.map(cat => cat._id === id ? updatedCategory : cat)
+            cats.map(cat => cat._id === updatedCategory._id ? updatedCategory : cat)
           );
           this.showSuccess('Category updated successfully');
-        },
-        error: (error) => this.showError(`Failed to update category: ${error.message || 'Unknown error'}`)
+        } else {
+          // Add new category
+          this.categories.update(cats => [updatedCategory, ...cats]);
+          this.showSuccess('Category added successfully');
+        }
       });
   }
 
@@ -150,27 +181,35 @@ export class CategoriesComponent implements OnInit {
       }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loading.set(true);
-        this.categoryService.deleteCategory(category._id)
-          .pipe(finalize(() => this.loading.set(false)))
-          .subscribe({
-            next: () => {
-              // If the category has an image, delete it as well
-              if (category.imageUrl) {
-                this.imageUploadService.deleteImage(category.imageUrl).subscribe();
-              }
-              
-              this.categories.update(cats =>
-                cats.filter(cat => cat._id !== category._id)
-              );
-              this.showSuccess('Category deleted successfully');
-            },
-            error: (error) => this.showError(`Failed to delete category: ${error.message || 'Unknown error'}`)
-          });
-      }
-    });
+    dialogRef.afterClosed()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        switchMap(result => {
+          if (!result) return EMPTY;
+          
+          this.loading.set(true);
+          return this.categoryService.deleteCategory(category._id)
+            .pipe(
+              finalize(() => this.loading.set(false)),
+              catchError(error => {
+                this.showError(`Failed to delete category: ${error.message || 'Unknown error'}`);
+                console.error(error);
+                return EMPTY;
+              }),
+              switchMap(() => {
+                // If the category has an image, delete it as well
+                if (category.imageUrl) {
+                  return this.imageUploadService.deleteImage(category.imageUrl);
+                }
+                return EMPTY;
+              })
+            );
+        })
+      )
+      .subscribe(() => {
+        this.categories.update(cats => cats.filter(cat => cat._id !== category._id));
+        this.showSuccess('Category deleted successfully');
+      });
   }
 
   private showSuccess(message: string): void {

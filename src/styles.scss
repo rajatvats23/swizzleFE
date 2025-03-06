@@ -27,3 +27,16 @@ html {
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+:root {
+  @include mat.datepicker-overrides((
+    // For the range background (the light green color in your screenshot)
+    calendar-date-in-range-state-background-color: #c8cec8,
+    
+    // For the range start/end dates (the darker circles - days 4, 5, and 20 in your screenshot)
+    calendar-date-selected-state-background-color: #008000,
+    calendar-date-selected-state-text-color: white,
+    
+    // You can also customize hover states for dates within the range
+    calendar-date-hover-state-background-color: #008000,
+  ));
+}

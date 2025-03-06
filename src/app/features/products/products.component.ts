@@ -1,124 +1,134 @@
 import { Component } from '@angular/core';
 import { GenericFormComponent } from '../../shared/generics/generic-form/generic-form.component';
 import { FormConfig } from '../../shared/generics/models/form.model';
+import { GenericTableComponent, TableColumn } from '../../shared/generics/table/table.component';
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+  lastActive: Date;
+}
 
 @Component({
   selector: 'app-products',
-  imports: [GenericFormComponent],
-  template: `<app-generic-form
-  [config]="formConfig"
-  [onSubmitForm]="handleSubmit"
-  [onCancelForm]="handleCancel"
-  [onCloseForm]="handleClose"
-  [onDoneForm]="handleDone"
-  [onCustomActionForm]="handleCustomAction"
-/>`,
-  styleUrl: './products.component.scss'
+  imports: [GenericTableComponent],
+  template: `<div class="container">
+  
+  <app-generic-table 
+    [data]="users" 
+    [columns]="columns"
+    [title]="'Products Listings'"
+    [pageSize]="5">
+  </app-generic-table>
+</div>
+`,
+styles: [`
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+h1 {
+  margin-bottom: 24px;
+  color: #333;
+}`]
 })
 export class ProductsComponent {
 
-  formConfig: FormConfig = {
-    fields: [
-      {
-        type: 'text',
-        name: 'firstName',
-        label: 'First Name',
-        placeholder: 'Enter your first name',
-        required: true,
-        appearance: 'outline',
-        validations: {
-          minLength: 2,
-          maxLength: 50
-        }
-      },
-      {
-        type: 'email',
-        name: 'email',
-        label: 'Email',
-        placeholder: 'Enter your email',
-        required: true,
-        appearance: 'outline',
-        hint: 'Enter a valid email address'
-      },
-      {
-        type: 'select',
-        name: 'country',
-        label: 'Country',
-        required: true,
-        appearance: 'outline',
-        options: [
-          { value: 'us', label: 'United States' },
-          { value: 'uk', label: 'United Kingdom' },
-          { value: 'ca', label: 'Canada' }
-        ]
-      },
-      {
-        type: 'number',
-        name: 'amount',
-        label: 'Amount',
-        required: true,
-        appearance: 'outline',
-        prefix: 'attach_money',
-        suffix: true,
-        textSuffix: '.00'
-      },
-      {
-        type: 'date',
-        name: 'birthDate',
-        label: 'Birth Date',
-        required: true,
-        appearance: 'outline'
-      },
-      {
-        type: 'radio',
-        name: 'gender',
-        label: 'Gender',
-        options: [
-          { value: 'male', label: 'Male' },
-          { value: 'female', label: 'Female' },
-          { value: 'other', label: 'Other' }
-        ]
-      },
-      {
-        type: 'textarea',
-        name: 'bio',
-        label: 'Biography',
-        placeholder: 'Tell us about yourself',
-        appearance: 'outline',
-        hint: 'Maximum 500 characters'
-      }
-    ],
-    buttons: {
-      submit: true,
-      cancel: true,
-      close: false,
-      done: true,
-      custom: [
-        { label: 'Save Draft', action: 'saveDraft', color: 'accent' }
-      ]
+  users: User[] = [
+    {
+      id: 1,
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      role: 'Admin',
+      status: 'Active',
+      lastActive: new Date('2023-11-15')
     },
-    columnCount: 2
-  };
+    {
+      id: 2,
+      name: 'Jane Smith',
+      email: 'jane.smith@example.com',
+      role: 'User',
+      status: 'Active',
+      lastActive: new Date('2023-11-14')
+    },
+    {
+      id: 3,
+      name: 'Bob Johnson',
+      email: 'bob.johnson@example.com',
+      role: 'Editor',
+      status: 'Inactive',
+      lastActive: new Date('2023-10-23')
+    },
+    {
+      id: 4,
+      name: 'Alice Williams',
+      email: 'alice.williams@example.com',
+      role: 'User',
+      status: 'Active',
+      lastActive: new Date('2023-11-10')
+    },
+    {
+      id: 5,
+      name: 'Charlie Brown',
+      email: 'charlie.brown@example.com',
+      role: 'Viewer',
+      status: 'Pending',
+      lastActive: new Date('2023-11-01')
+    },
+    {
+      id: 6,
+      name: 'Diana Miller',
+      email: 'diana.miller@example.com',
+      role: 'Admin',
+      status: 'Active',
+      lastActive: new Date('2023-11-12')
+    }
+  ];
 
-  handleSubmit = async (formValue: any) => {
-    console.log('Form submitted:', formValue);
-    // Handle form submission
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-  };
-
-  handleCancel = () => {
-    console.log('Form cancelled');
-  };
-
-  handleClose = () => {
-    console.log('Form closed');
-  };
-
-  handleDone = () => {
-    console.log('Form done');
-  };
-
-  handleCustomAction = (action: string) => {
-    console.log('Custom action:', action);
-  };
+  columns: TableColumn<User>[] = [
+    {
+      name: 'id',
+      header: 'ID',
+      cell: (element: User) => element.id.toString(),
+      sortable: true
+    },
+    {
+      name: 'name',
+      header: 'Name',
+      cell: (element: User) => element.name,
+      sortable: true,
+      filterable: true
+    },
+    {
+      name: 'email',
+      header: 'Email',
+      cell: (element: User) => element.email,
+      sortable: true,
+      filterable: true
+    },
+    {
+      name: 'role',
+      header: 'Role',
+      cell: (element: User) => element.role,
+      sortable: true,
+      filterable: true
+    },
+    {
+      name: 'status',
+      header: 'Status',
+      cell: (element: User) => element.status,
+      sortable: true
+    },
+    {
+      name: 'lastActive',
+      header: 'Last Active',
+      cell: (element: User) => element.lastActive.toLocaleDateString(),
+      sortable: true
+    }
+  ];
 }

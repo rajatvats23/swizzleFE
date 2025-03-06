@@ -14,22 +14,39 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatTableModule } from "@angular/material/table";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatChipsModule } from "@angular/material/chips";
+import { MatNativeDateModule } from "@angular/material/core";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatDividerModule } from "@angular/material/divider";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatSelectModule } from "@angular/material/select";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 
 const declarations = [
     MatCardModule, MatSidenavModule, MatListModule,
     MatIconModule,
     MatToolbarModule,
     MatButtonModule,
+    MatTableModule,
+    MatSidenavModule,
     MatPaginatorModule,
+    MatInputModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatDividerModule,
+    MatMenuModule,
+    MatTooltipModule,
+    MatProgressBarModule,
+    MatChipsModule,
+    MatSlideToggleModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatSelectModule,
+    MatCheckboxModule,
     MatDialogModule,
     FormsModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    MatProgressBarModule,
-    MatTableModule,
-    MatButtonToggleModule,
-    MatFormFieldModule,
-    MatTooltipModule
+    MatButtonToggleModule
 ]
 @NgModule({
     imports: [...declarations],

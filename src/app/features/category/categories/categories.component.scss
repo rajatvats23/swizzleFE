@@ -3,9 +3,19 @@
   padding: 1%;
 }
 
+// Variables for consistent theming
+$primary-color: #009c4c;
+$border-radius: 4px;
+$box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+$transition-speed: 0.3s;
+
 .categories-container {
   margin: 20px;
   background-color: rgba(256, 256, 256, 0.6);
+  
+  @media (max-width: 599px) {
+    margin: 8px;
+  }
 }
 
 mat-card-header {
@@ -17,6 +27,16 @@ mat-card-header {
     flex-wrap: wrap;
     align-items: center;
     gap: 16px;
+    
+    @media (max-width: 599px) {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 12px;
+    }
+  }
+  
+  @media (max-width: 599px) {
+    padding: 12px;
   }
 }
 
@@ -31,12 +51,16 @@ mat-card-header {
 }
 
 .add-button {
-  background-color: #009c4c !important;
+  background-color: $primary-color !important;
   color: white !important;
   min-width: max-content;
   display: flex;
   align-items: center;
   gap: 8px;
+  
+  @media (max-width: 599px) {
+    align-self: flex-end;
+  }
 }
 
 // Grid View Styles
@@ -45,38 +69,35 @@ mat-card-header {
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 20px;
   padding: 20px;
+  
+  @media (max-width: 599px) {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    padding: 12px;
+  }
+  
+  @media (min-width: 600px) and (max-width: 959px) {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
 }
 
 .category-card {
   position: relative;
-  transition: all 0.3s ease;
+  transition: transform $transition-speed ease, box-shadow $transition-speed ease;
   height: 100%;
   border: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: none !important;
+  will-change: transform, box-shadow;
 
   img {
     width: 100%;
     height: 180px;
     object-fit: cover;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-  }
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1) !important;
+    border-top-left-radius: $border-radius;
+    border-top-right-radius: $border-radius;
     
-    .category-actions {
-      opacity: 1;
-    }
-
-    .category-details {
-      background-color: #009c4c;
-      color: white;
-      
-      p {
-        color: white;
-      }
+    @media (max-width: 599px) {
+      height: 140px;
     }
   }
 
@@ -87,13 +108,19 @@ mat-card-header {
     display: flex;
     gap: 4px;
     opacity: 0;
-    transition: opacity 0.2s ease;
+    transition: opacity $transition-speed ease;
     background: rgba(0, 0, 0, 0.6);
-    border-radius: 4px;
+    border-radius: $border-radius;
     padding: 4px;
+    z-index: 2;
+    
+    @media (max-width: 599px) {
+      opacity: 1;
+    }
     
     mat-icon {
       color: white;
+      transition: transform 0.2s ease;
       
       &:hover {
         transform: scale(1.1);
@@ -103,7 +130,7 @@ mat-card-header {
 
   .category-details {
     padding: 16px;
-    transition: background-color 0.3s ease;
+    transition: background-color $transition-speed ease, color $transition-speed ease;
     
     h3 {
       margin: 0 0 8px;
@@ -123,6 +150,24 @@ mat-card-header {
       -webkit-box-orient: vertical;
     }
   }
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: $box-shadow !important;
+    
+    .category-actions {
+      opacity: 1;
+    }
+
+    .category-details {
+      background-color: $primary-color;
+      color: white;
+      
+      p {
+        color: white;
+      }
+    }
+  }
 }
 
 // Table View Styles
@@ -132,17 +177,17 @@ mat-card-header {
 
 .categories-table {
   width: 100%;
+  border-collapse: collapse;
   
   .mat-mdc-header-cell {
     font-weight: 500;
-    // color: rgba(0, 0, 0, 0.87);
   }
   
   .table-image {
     width: 60px;
     height: 60px;
     object-fit: cover;
-    border-radius: 4px;
+    border-radius: $border-radius;
   }
   
   .table-actions {
@@ -151,8 +196,10 @@ mat-card-header {
   }
 
   .mat-mdc-row {
+    transition: background-color 0.2s ease;
+    
     &:hover {
-      background-color: rgba(0, 156, 76, 0.04);
+      background-color: rgba($primary-color, 0.04);
     }
   }
 }
@@ -175,48 +222,6 @@ mat-card-header {
 
 .paginator {
   margin-top: 10px;
-  border-bottom-right-radius: 4px;
-  border-bottom-left-radius: 4px;
-}
-
-// Responsive adjustments
-@media (max-width: 599px) {
-  .categories-container {
-    margin: 8px;
-  }
-  
-  mat-card-header {
-    padding: 12px;
-  }
-
-  .header-controls {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .add-button {
-    align-self: flex-end;
-  }
-  
-  .categories-grid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 12px;
-    padding: 12px;
-  }
-
-  .category-card {
-    .category-actions {
-      opacity: 1;
-    }
-    
-    img {
-      height: 140px;
-    }
-  }
-}
-
-@media (min-width: 600px) and (max-width: 959px) {
-  .categories-grid {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  }
+  border-bottom-right-radius: $border-radius;
+  border-bottom-left-radius: $border-radius;
 }

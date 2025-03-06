@@ -1,0 +1,86 @@
+<!-- advanced-filter-drawer.component.html -->
+<div class="filter-drawer" [class.open]="isOpen">
+    <div class="drawer-header">
+      <h2>Advanced Filters</h2>
+      <button mat-icon-button (click)="onClose()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    
+    <div class="drawer-content">
+      <form [formGroup]="filterForm">
+        <!-- Text input field -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name" placeholder="Enter name">
+        </mat-form-field>
+
+        <!-- Chips -->
+        <div class="form-field-container">
+            <!-- <label class="field-label">Categories</label> -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Select Categories</mat-label>
+              <mat-select (selectionChange)="addCategory($event.value)" [value]="">
+                @for (option of categoryOptions; track option) {
+                  <mat-option [value]="option">{{ option }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+        <div class="chips-container">
+            @for (category of selectedCategories; track category) {
+              <mat-chip (removed)="removeCategory(category)">
+                {{ category }}
+                <mat-icon matChipRemove>cancel</mat-icon>
+              </mat-chip>
+            }
+            @if (selectedCategories.length === 0) {
+              <div class="no-chips-message">No categories selected</div>
+            }
+          </div>
+        
+        <!-- Select dropdown -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Status</mat-label>
+          <mat-select formControlName="status">
+            <mat-option [value]="">All</mat-option>
+            @for (option of statusOptions; track option) {
+              <mat-option [value]="option">{{ option }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        
+        <!-- Radio buttons -->
+        <div class="form-field-container">
+          <label class="field-label">Priority</label>
+          <mat-radio-group formControlName="priority" class="radio-group">
+            @for (option of priorityOptions; track option) {
+              <mat-radio-button [value]="option">{{ option }}</mat-radio-button>
+            }
+          </mat-radio-group>
+        </div>
+        
+        <!-- Min/Max range fields -->
+        <div class="range-fields">
+          <mat-form-field appearance="outline">
+            <mat-label>Min Amount</mat-label>
+            <input matInput formControlName="minAmount" type="number" placeholder="Min">
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Max Amount</mat-label>
+            <input matInput formControlName="maxAmount" type="number" placeholder="Max">
+          </mat-form-field>
+        </div>
+        
+      </form>
+    </div>
+    
+    <div class="drawer-footer">
+      <button mat-stroked-button (click)="onReset()">Reset</button>
+      <button mat-flat-button color="primary" (click)="onApply()">Apply Filters</button>
+    </div>
+  </div>
+  
+  <div class="drawer-backdrop" [class.visible]="isOpen" (click)="onClose()"></div>

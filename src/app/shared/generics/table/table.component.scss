@@ -1,0 +1,160 @@
+@use '@angular/material' as mat;
+/* generic-table.component.scss */
+.table-container {
+  width: 100%;
+  margin-bottom: 24px;
+  position: relative; /* Make sure this is the positioning context for the drawer */
+  
+  mat-card {
+    padding: 0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    background-color: #ffffff;
+    
+    mat-card-header {
+      padding: 20px 24px;
+      background-color: #ffffff;
+      border-bottom: 1px solid #eee;
+      
+      mat-card-title {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 500;
+      }
+    }
+    
+    mat-card-content {
+      padding: 0;
+    }
+  }
+  
+  .filter-container {
+    padding: 16px 24px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    .search-field {
+      flex: 1;
+      max-width: 400px;
+      
+      mat-form-field {
+        width: 100%;
+      }
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      
+      button {
+        color: rgba(0, 0, 0, 0.54);
+        
+        &:hover {
+          color: rgba(0, 0, 0, 0.87);
+        }
+      }
+      
+      .date-range-field {
+        width: 240px;
+      }
+    }
+  }
+  
+  .table-wrapper {
+    overflow-x: auto;
+    background-color: #ffffff;
+    position: relative; /* Needed for proper backdrop effect */
+    
+    &.filter-active {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    
+    table {
+      width: 100%;
+      background-color: #ffffff;
+      
+      th.mat-header-cell {
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.7);
+        padding: 12px 16px;
+        border-bottom: 1px solid #eee;
+        
+        &.mat-sort-header-sorted {
+          color: rgba(0, 0, 0, 0.87);
+        }
+      }
+      
+      td.mat-cell {
+        padding: 14px 16px;
+        border-bottom: 1px solid #f5f5f5;
+      }
+      
+      tr.mat-row {
+        background-color: #ffffff;
+        
+        &:hover {
+          background-color: #f8f9fa;
+        }
+      }
+      
+      .no-data {
+        padding: 32px 16px;
+        
+        .no-data-message {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: rgba(0, 0, 0, 0.5);
+          
+          mat-icon {
+            margin-right: 8px;
+          }
+        }
+      }
+    }
+  }
+  
+  .empty-table {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    color: rgba(0, 0, 0, 0.5);
+    
+    mat-icon {
+      font-size: 48px;
+      height: 48px;
+      width: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+    
+    p {
+      font-size: 16px;
+      margin: 0;
+    }
+  }
+  
+  mat-paginator {
+    border-top: 1px solid #eee;
+  }
+}
+
+/* When the drawer is open, add shadow effect to the table */
+// :host-context(.filter-drawer-open) {
+//   .table-wrapper::after {
+//     content: '';
+//     position: absolute;
+//     top: 0;
+//     left: 0;
+//     right: 0;
+//     bottom: 0;
+//     background-color: rgba(0, 0, 0, 0.1);
+//     pointer-events: none;
+//   }
+// }
