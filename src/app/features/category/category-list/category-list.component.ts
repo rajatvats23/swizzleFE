@@ -126,8 +126,8 @@ interface CategoryTableItem {
       }
 
       .add {
-        background-color: #009c4c;
-        color: white;
+        background-color: #009c4c !important;
+        color: white !important;
       }
 
       .spacer {
@@ -208,7 +208,7 @@ export class CategoryListComponent implements OnInit {
   // Pagination configuration with signal
   paginationConfig: PaginationConfig = {
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 5,
     totalItems: 0,
   };
 
