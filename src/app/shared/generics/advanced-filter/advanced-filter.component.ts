@@ -1,5 +1,5 @@
-// advanced-filter-drawer.component.ts
-import { Component, EventEmitter, Output, Input } from '@angular/core';
+// advanced-filter.component.ts
+import { Component, EventEmitter, Output, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,6 +10,22 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+
+export interface FilterOption {
+  value: string;
+  label: string;
+}
+
+export interface FilterConfig {
+  name?: boolean;
+  status?: FilterOption[];
+  categories?: FilterOption[];
+  priority?: FilterOption[];
+  dateRange?: boolean;
+  amountRange?: boolean;
+}
 
 @Component({
   selector: 'app-advanced-filter-drawer',
@@ -25,21 +41,41 @@ import { MatSidenavModule } from '@angular/material/sidenav';
     MatInputModule,
     MatRadioModule,
     MatSelectModule,
-    MatSidenavModule
+    MatSidenavModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   templateUrl: './advanced-filter.component.html',
   styleUrl: './advanced-filter.component.scss'
 })
-export class AdvancedFilterComponent {
+export class AdvancedFilterComponent implements OnInit {
   @Input() isOpen = false;
+  @Input() config: FilterConfig = {
+    name: true,
+    status: [],
+    categories: [],
+    priority: [],
+    dateRange: false,
+    amountRange: false
+  };
+  
   @Output() closeDrawer = new EventEmitter<void>();
   @Output() applyFilters = new EventEmitter<any>();
   
   filterForm: FormGroup;
-  statusOptions = ['Active', 'Inactive', 'Pending', 'Completed'];
-  categoryOptions = ['Category 1', 'Category 2', 'Category 3', 'Category 4'];
-  priorityOptions = ['High', 'Medium', 'Low'];
   selectedCategories: string[] = [];
+  
+  get statusOptions(): FilterOption[] {
+    return this.config.status || [];
+  }
+  
+  get categoryOptions(): FilterOption[] {
+    return this.config.categories || [];
+  }
+  
+  get priorityOptions(): FilterOption[] {
+    return this.config.priority || [];
+  }
   
   constructor(private fb: FormBuilder) {
     this.filterForm = this.fb.group({
@@ -47,8 +83,39 @@ export class AdvancedFilterComponent {
       status: [''],
       priority: [''],
       minAmount: [''],
-      maxAmount: ['']
+      maxAmount: [''],
+      startDate: [''],
+      endDate: ['']
     });
+  }
+  
+  ngOnInit(): void {
+    // Build form based on config
+    const formControls: any = {};
+    
+    if (this.config.name) {
+      formControls.name = [''];
+    }
+    
+    if (this.config.status && this.config.status.length > 0) {
+      formControls.status = [''];
+    }
+    
+    if (this.config.priority && this.config.priority.length > 0) {
+      formControls.priority = [''];
+    }
+    
+    if (this.config.dateRange) {
+      formControls.startDate = [''];
+      formControls.endDate = [''];
+    }
+    
+    if (this.config.amountRange) {
+      formControls.minAmount = [''];
+      formControls.maxAmount = [''];
+    }
+    
+    this.filterForm = this.fb.group(formControls);
   }
   
   addCategory(category: string): void {
@@ -59,6 +126,11 @@ export class AdvancedFilterComponent {
   
   removeCategory(category: string): void {
     this.selectedCategories = this.selectedCategories.filter(c => c !== category);
+  }
+  
+  getCategoryLabel(value: string): string {
+    const option = this.categoryOptions.find(opt => opt.value === value);
+    return option ? option.label : value;
   }
   
   onClose(): void {

@@ -1,160 +1,203 @@
 @use '@angular/material' as mat;
-/* generic-table.component.scss */
-.table-container {
+
+// Host styles and CSS variables (moved to the top to fix warnings)
+:host {
+  // Define CSS variables that our styles use
+  --mat-table-header-bg: #f5f5f5;
+  --mat-table-header-color: rgba(0, 0, 0, 0.87);
+  --mat-table-header-border: rgba(0, 0, 0, 0.12);
+  --mat-table-row-hover-bg: rgba(0, 0, 0, 0.04);
+  --mat-table-cell-color: rgba(0, 0, 0, 0.87);
+  --mat-table-cell-border: rgba(0, 0, 0, 0.12);
+  --mat-table-empty-color: rgba(0, 0, 0, 0.54);
+  
+  // Apply Material table overrides with valid tokens
+  @include mat.table-overrides((
+    background-color: white,
+    header-headline-color: rgba(0, 0, 0, 0.87),
+    row-item-label-text-color: rgba(0, 0, 0, 0.87),
+    row-item-outline-color: rgba(0, 0, 0, 0.12),
+    header-headline-weight: 600,
+    header-headline-size: 14px,
+    row-item-label-text-size: 14px
+  ));
+}
+
+// Theme variations
+:host.primary-theme {
+  --mat-table-header-bg: #e3f2fd;
+  --mat-table-header-color: #1565c0;
+  
+  @include mat.table-overrides((
+    background-color: white,
+    header-headline-color: #1565c0
+  ));
+}
+
+:host.accent-theme {
+  --mat-table-header-bg: #fce4ec;
+  --mat-table-header-color: #c2185b;
+  
+  @include mat.table-overrides((
+    background-color: white,
+    header-headline-color: #c2185b
+  ));
+}
+
+:host.dark-theme {
+  --mat-table-header-bg: #424242;
+  --mat-table-header-color: rgba(255, 255, 255, 0.87);
+  --mat-table-header-border: rgba(255, 255, 255, 0.12);
+  --mat-table-row-hover-bg: rgba(255, 255, 255, 0.08);
+  --mat-table-cell-color: rgba(255, 255, 255, 0.87);
+  --mat-table-cell-border: rgba(255, 255, 255, 0.12);
+  --mat-table-empty-color: rgba(255, 255, 255, 0.5);
+  
+  @include mat.table-overrides((
+    background-color: #303030,
+    header-headline-color: rgba(255, 255, 255, 0.87),
+    row-item-label-text-color: rgba(255, 255, 255, 0.87),
+    row-item-outline-color: rgba(255, 255, 255, 0.12)
+  ));
+}
+
+// Custom styles for the table
+.app-table-container {
   width: 100%;
-  margin-bottom: 24px;
-  position: relative; /* Make sure this is the positioning context for the drawer */
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.app-table {
+  width: 100%;
+  table-layout: fixed;
+  min-width: 680px;
+  border-collapse: separate;
+  border-spacing: 0;
   
-  mat-card {
-    padding: 0;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
-    background-color: #ffffff;
+  // Header styles
+  .mat-mdc-header-row {
+
+    height: 56px;
+    background-color: var(--mat-table-header-bg, #009C4C);
+    color: white !important;
+  }
+  
+  .mat-mdc-header-cell {
+    font-weight: 200;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-family: 'Josefin Sans', sans-serif;
+    border-bottom-width: 2px;
+    border-bottom-color: var(--mat-table-header-border, rgba(0, 0, 0, 0.12));
+    color: var(--mat-table-header-color, rgb(255, 255, 255));
+    padding: 0 16px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+  
+  // Data row styles
+  .data-row {
+    height: 52px;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .data-row:hover {
+    background-color: var(--mat-table-row-hover-bg, rgba(0, 0, 0, 0.04));
+  }
+  
+  // Cell styles
+  .mat-mdc-cell {
+    padding: 0 16px;
+    font-size: 14px;
+    max-width: 100%;
+    color: var(--mat-table-cell-color, rgba(0, 0, 0, 0.87));
+    border-bottom-color: var(--mat-table-cell-border, rgba(0, 0, 0, 0.12));
     
-    mat-card-header {
-      padding: 20px 24px;
-      background-color: #ffffff;
-      border-bottom: 1px solid #eee;
-      
-      mat-card-title {
-        margin: 0;
-        font-size: 18px;
-        font-weight: 500;
-      }
-    }
-    
-    mat-card-content {
-      padding: 0;
+    .truncated {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block;
     }
   }
   
-  .filter-container {
-    padding: 16px 24px 8px;
+  // No data row styling
+  .no-data-row {
+    height: 56px;
+  }
+  
+  .no-data-cell {
+    padding: 16px;
+  }
+  
+  .no-data-container {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    
-    .search-field {
-      flex: 1;
-      max-width: 400px;
-      
-      mat-form-field {
-        width: 100%;
-      }
-    }
-    
-    .action-buttons {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      
-      button {
-        color: rgba(0, 0, 0, 0.54);
-        
-        &:hover {
-          color: rgba(0, 0, 0, 0.87);
-        }
-      }
-      
-      .date-range-field {
-        width: 240px;
-      }
-    }
-  }
-  
-  .table-wrapper {
-    overflow-x: auto;
-    background-color: #ffffff;
-    position: relative; /* Needed for proper backdrop effect */
-    
-    &.filter-active {
-      opacity: 0.7;
-      pointer-events: none;
-    }
-    
-    table {
-      width: 100%;
-      background-color: #ffffff;
-      
-      th.mat-header-cell {
-        font-weight: 500;
-        color: rgba(0, 0, 0, 0.7);
-        padding: 12px 16px;
-        border-bottom: 1px solid #eee;
-        
-        &.mat-sort-header-sorted {
-          color: rgba(0, 0, 0, 0.87);
-        }
-      }
-      
-      td.mat-cell {
-        padding: 14px 16px;
-        border-bottom: 1px solid #f5f5f5;
-      }
-      
-      tr.mat-row {
-        background-color: #ffffff;
-        
-        &:hover {
-          background-color: #f8f9fa;
-        }
-      }
-      
-      .no-data {
-        padding: 32px 16px;
-        
-        .no-data-message {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: rgba(0, 0, 0, 0.5);
-          
-          mat-icon {
-            margin-right: 8px;
-          }
-        }
-      }
-    }
-  }
-  
-  .empty-table {
-    display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 48px 24px;
-    color: rgba(0, 0, 0, 0.5);
+    gap: 8px;
+    color: var(--mat-table-empty-color, rgba(0, 0, 0, 0.54));
+  }
+  
+  .no-data-icon {
+    font-size: 20px;
+    height: 20px;
+    width: 20px;
+  }
+  
+  // Actions column styles
+  .actions-header {
+    text-align: center;
+    width: 120px;
+  }
+  
+  .actions-cell {
+    width: 120px;
+    padding: 0 8px;
+  }
+  
+  .actions-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
     
-    mat-icon {
-      font-size: 48px;
-      height: 48px;
-      width: 48px;
-      margin-bottom: 16px;
-      opacity: 0.5;
-    }
-    
-    p {
-      font-size: 16px;
-      margin: 0;
+    .mat-mdc-icon-button {
+      width: 36px;
+      height: 36px;
+      padding: 6px;
+      
+      .mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+      }
     }
   }
   
-  mat-paginator {
-    border-top: 1px solid #eee;
+  // Column-specific styling
+  .mat-column-name {
+    width: 20%;
+  }
+  
+  .mat-column-description {
+    width: 35%;
+  }
+  
+  .mat-column-createdAt, .mat-column-updatedAt {
+    width: 20%;
   }
 }
 
-/* When the drawer is open, add shadow effect to the table */
-// :host-context(.filter-drawer-open) {
-//   .table-wrapper::after {
-//     content: '';
-//     position: absolute;
-//     top: 0;
-//     left: 0;
-//     right: 0;
-//     bottom: 0;
-//     background-color: rgba(0, 0, 0, 0.1);
-//     pointer-events: none;
-//   }
-// }
+// Responsive behavior
+@media (max-width: 768px) {
+  .app-table-container {
+    border-radius: 0;
+    box-shadow: none;
+  }
+}

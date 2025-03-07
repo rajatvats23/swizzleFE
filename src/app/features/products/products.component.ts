@@ -1,7 +1,4 @@
 import { Component } from '@angular/core';
-import { GenericFormComponent } from '../../shared/generics/generic-form/generic-form.component';
-import { FormConfig } from '../../shared/generics/models/form.model';
-import { GenericTableComponent, TableColumn } from '../../shared/generics/table/table.component';
 
 interface User {
   id: number;
@@ -14,15 +11,14 @@ interface User {
 
 @Component({
   selector: 'app-products',
-  imports: [GenericTableComponent],
   template: `<div class="container">
   
-  <app-generic-table 
+  <!-- <app-generic-table 
     [data]="users" 
     [columns]="columns"
     [title]="'Products Listings'"
     [pageSize]="5">
-  </app-generic-table>
+  </app-generic-table> -->
 </div>
 `,
 styles: [`
@@ -90,7 +86,7 @@ export class ProductsComponent {
     }
   ];
 
-  columns: TableColumn<User>[] = [
+  columns:any[] = [
     {
       name: 'id',
       header: 'ID',
