@@ -15,14 +15,21 @@ import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { Sort } from "@angular/material/sort";
+import { MatDialogModule } from "@angular/material/dialog";
 import { PageEvent } from "@angular/material/paginator";
 import { debounceTime, distinctUntilChanged, Subject } from "rxjs";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormsModule } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { MatDialog } from "@angular/material/dialog";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { CategoryDetailsComponent } from "../category-details/category-details.component";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { Category, CategoryCreate, CategoryUpdate } from "../../../shared/interfaces/category.interface";
+import { ConfirmDialogComponent, ConfirmDialogData } from "../../../shared/generics/confirm-dialog.component";
 
-interface Category {
+interface CategoryTableItem {
   id: string;
   name: string;
   description: string;
@@ -44,6 +51,8 @@ interface Category {
     MatInputModule,
     MatFormFieldModule,
     FormsModule,
+    MatProgressBarModule,
+    MatDialogModule,
   ],
   template: `
     <mat-card class="category-card">
@@ -178,9 +187,11 @@ interface Category {
 export class CategoryListComponent implements OnInit {
   // Dependency injection using inject function
   private service = inject(CategoryService);
+  private dialog = inject(MatDialog);
+  private snackBar = inject(MatSnackBar);
 
   // State signals
-  private rawCategories = signal<any[]>([]);
+  private rawCategories = signal<Category[]>([]);
   isLoading = signal<boolean>(true);
   displayColumns: string[] = [
     "name",
@@ -208,7 +219,7 @@ export class CategoryListComponent implements OnInit {
   };
 
   // Formatted categories signal
-  formattedCategories = computed(() => {
+  formattedCategories = computed<CategoryTableItem[]>(() => {
     return this.rawCategories().map((item) => ({
       id: item._id,
       name: item.name,
@@ -246,13 +257,16 @@ export class CategoryListComponent implements OnInit {
 
     this.service.getCategories(params).subscribe({
       next: (response: CategoryResponse) => {
-        this.rawCategories.set(response.data);
+        this.rawCategories.set(response.data as Category[]);
         this.paginationConfig.totalItems = response.pagination.total;
         this.isLoading.set(false);
       },
       error: (err) => {
         console.error("Error loading categories:", err);
         this.isLoading.set(false);
+        this.snackBar.open("Failed to load categories. Please try again.", "Close", {
+          duration: 5000,
+        });
       },
     });
   }
@@ -277,25 +291,115 @@ export class CategoryListComponent implements OnInit {
   }
 
   addCategory() {
+    const dialogRef = this.dialog.open(CategoryDetailsComponent, {
+      width: '600px',
+      data: null // Passing null indicates we're adding a new category
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.isLoading.set(true);
+        
+        const newCategory: CategoryCreate = {
+          name: result.name,
+          description: result.description,
+          imageUrl: result.imageUrl
+        };
+
+        this.service.createCategory(newCategory).subscribe({
+          next: () => {
+            this.snackBar.open('Category created successfully', 'Close', { duration: 3000 });
+            this.loadCategories();
+          },
+          error: (error) => {
+            console.error('Error creating category:', error);
+            this.isLoading.set(false);
+            this.snackBar.open('Failed to create category. Please try again.', 'Close', { duration: 5000 });
+          }
+        });
+      }
+    });
+  }
+
+  editCategory(categoryItem: CategoryTableItem) {
+    this.isLoading.set(true);
     
+    // First, get the full category details
+    this.service.getCategoryById(categoryItem.id).subscribe({
+      next: (categoryData: Category) => {
+        this.isLoading.set(false);
+        
+        const dialogRef = this.dialog.open(CategoryDetailsComponent, {
+          width: '600px',
+          data: categoryData // Pass the full category data
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            this.isLoading.set(true);
+            
+            const updatedCategory: CategoryUpdate = {
+              name: result.name,
+              description: result.description
+            };
+            
+            // Only include imageUrl if it was changed
+            if (result.imageUrl !== categoryData.imageUrl) {
+              updatedCategory.imageUrl = result.imageUrl;
+            }
+
+            this.service.updateCategory(categoryItem.id, updatedCategory).subscribe({
+              next: () => {
+                this.snackBar.open('Category updated successfully', 'Close', { duration: 3000 });
+                this.loadCategories();
+              },
+              error: (error) => {
+                console.error('Error updating category:', error);
+                this.isLoading.set(false);
+                this.snackBar.open('Failed to update category. Please try again.', 'Close', { duration: 5000 });
+              }
+            });
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error fetching category details:', error);
+        this.isLoading.set(false);
+        this.snackBar.open('Failed to fetch category details. Please try again.', 'Close', { duration: 5000 });
+      }
+    });
   }
 
-  editCategory(category: Category) {
-    console.log("Edit category:", category);
-    // Navigate or open dialog with category data
-  }
+  deleteCategory(categoryItem: CategoryTableItem) {
+    const dialogData: ConfirmDialogData = {
+      title: 'Delete Category',
+      message: `Are you sure you want to delete the category "${categoryItem.name}"? This action cannot be undone.`,
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+      confirmButtonColor: 'warn'
+    };
 
-  deleteCategory(category: Category) {
-    console.log("Delete category:", category);
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '400px',
+      data: dialogData
+    });
 
-    this.service.deleteCategory(category.id).subscribe({
-      next: () => {
-        // Reload the current page to refresh data
-        this.loadCategories();
-      },
-      error: (err) => {
-        console.error("Error deleting category:", err);
-      },
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.isLoading.set(true);
+
+        this.service.deleteCategory(categoryItem.id).subscribe({
+          next: () => {
+            this.snackBar.open('Category deleted successfully', 'Close', { duration: 3000 });
+            this.loadCategories();
+          },
+          error: (error) => {
+            console.error('Error deleting category:', error);
+            this.isLoading.set(false);
+            this.snackBar.open('Failed to delete category. Please try again.', 'Close', { duration: 5000 });
+          }
+        });
+      }
     });
   }
 }
