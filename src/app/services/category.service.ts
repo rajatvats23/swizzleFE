@@ -1,57 +1,74 @@
 import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { HttpService } from './http.service';
-import { Category, CategoryCreate, CategoryUpdate } from '../shared/interfaces/category.interface';
+import { environment } from '../../environments/environment';
+
+export interface CategoryQueryParams {
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortDirection?: 'asc' | 'desc';
+  search?: string;
+}
+
+export interface CategoryResponse {
+  data: any[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class CategoryService {
-  private http = inject(HttpService);
-  private apiPath = '/category';
+  private http = inject(HttpClient);
+  private baseUrl = `${environment.apiUrl}/category`;
 
-  /**
-   * Get all categories
-   * @returns Observable of categories array
-   */
-  getCategories(): Observable<Category[]> {
-    return this.http.get<Category[]>(this.apiPath);
+  getCategories(params?: CategoryQueryParams): Observable<CategoryResponse> {
+    let httpParams = new HttpParams();
+    
+    if (params) {
+      if (params.page !== undefined) {
+        httpParams = httpParams.set('page', params.page.toString());
+      }
+      
+      if (params.limit !== undefined) {
+        httpParams = httpParams.set('limit', params.limit.toString());
+      }
+      
+      if (params.sortBy) {
+        httpParams = httpParams.set('sortBy', params.sortBy);
+      }
+      
+      if (params.sortDirection) {
+        httpParams = httpParams.set('sortDirection', params.sortDirection);
+      }
+      
+      if (params.search) {
+        httpParams = httpParams.set('search', params.search);
+      }
+    }
+    
+    return this.http.get<CategoryResponse>(this.baseUrl, { params: httpParams });
   }
 
-  /**
-   * Get category by ID
-   * @param id Category ID
-   * @returns Observable of category
-   */
-  getCategoryById(id: string): Observable<Category> {
-    return this.http.get<Category>(`${this.apiPath}/${id}`);
+  getCategoryById(id: string): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/${id}`);
   }
 
-  /**
-   * Add a new category
-   * @param category Category data
-   * @returns Observable of created category
-   */
-  addCategory(category: CategoryCreate): Observable<Category> {
-    return this.http.post<Category>(this.apiPath, category);
+  createCategory(category: any): Observable<any> {
+    return this.http.post<any>(this.baseUrl, category);
   }
 
-  /**
-   * Update an existing category
-   * @param id Category ID
-   * @param category Updated category data
-   * @returns Observable of updated category
-   */
-  updateCategory(id: string, category: CategoryUpdate): Observable<Category> {
-    return this.http.put<Category>(`${this.apiPath}/${id}`, category);
+  updateCategory(id: string, category: any): Observable<any> {
+    return this.http.put<any>(`${this.baseUrl}/${id}`, category);
   }
 
-  /**
-   * Delete a category
-   * @param id Category ID
-   * @returns Observable of void
-   */
-  deleteCategory(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiPath}/${id}`);
+  deleteCategory(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/${id}`);
   }
 }

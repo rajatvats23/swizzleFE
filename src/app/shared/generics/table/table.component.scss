@@ -63,6 +63,7 @@
 
 // Custom styles for the table
 .app-table-container {
+  position: relative;
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -199,5 +200,33 @@
   .app-table-container {
     border-radius: 0;
     box-shadow: none;
+  }
+}
+
+
+.mat-sort-header-arrow {
+  color: white !important;
+}
+
+.mat-sort-header-content {
+  color: white !important;
+}
+
+.custom-progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  
+  // Override Material progress bar colors
+  ::ng-deep {
+    .mdc-linear-progress__bar-inner {
+      border-color: #009C4C !important;
+    }
+    
+    .mdc-linear-progress__buffer-bar {
+      background-color: rgba(0, 156, 76, 0.2) !important;
+    }
   }
 }
