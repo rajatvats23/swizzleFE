@@ -71,16 +71,50 @@ export const routes: Routes = [
       },
       {
         path: 'products',
-        loadComponent: () => import('./features/products/products.component')
-          .then(m => m.ProductsComponent),
-        title: 'Products'
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./features/products/product-list/product-list.component')
+              .then(m => m.ProductListComponent),
+            title: 'Products'
+          },
+          {
+            path: 'create',
+            loadComponent: () => import('./features/products/product-details/product-form.component')
+              .then(m => m.ProductFormComponent),
+            title: 'Create Product'
+          },
+          {
+            path: 'edit/:id',
+            loadComponent: () => import('./features/products/product-details/product-form.component')
+              .then(m => m.ProductFormComponent),
+            title: 'Edit Product'
+          }
+        ]
       },
-      {
-        path: 'addons',
-        loadComponent: () => import('./features/addons/addons.component')
-          .then(m => m.AddonsComponent),
-        title: 'Addons'
-      },
+      // {
+      //   path: 'addons',
+      //   children: [
+      //     {
+      //       path: '',
+      //       loadComponent: () => import('./features/addons/addon-list/addon-list.component')
+      //         .then(m => m.AddonListComponent),
+      //       title: 'Add-ons'
+      //     },
+      //     {
+      //       path: 'create',
+      //       loadComponent: () => import('./features/addons/addon-form/addon-form.component')
+      //         .then(m => m.AddonFormComponent),
+      //       title: 'Create Add-on'
+      //     },
+      //     {
+      //       path: 'edit/:id',
+      //       loadComponent: () => import('./features/addons/addon-form/addon-form.component')
+      //         .then(m => m.AddonFormComponent),
+      //       title: 'Edit Add-on'
+      //     }
+      //   ]
+      // },
       {
         path: 'orders',
         loadComponent: () => import('./features/orders/orders.component')

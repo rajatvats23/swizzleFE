@@ -1,0 +1,318 @@
+<div class="form-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ isEditMode() ? 'Edit Product' : 'Create Product' }}</mat-card-title>
+      <div class="spacer"></div>
+      <button mat-button (click)="navigateBack()">
+        <mat-icon>arrow_back</mat-icon> Back to Products
+      </button>
+    </mat-card-header>
+    
+    <mat-card-content>
+      @if (isLoading()) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      }
+      
+      <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+        <div class="form-layout">
+          <!-- Left column - Basic Info -->
+          <div class="form-column">
+            <h3>Basic Information</h3>
+            
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Name</mat-label>
+              <input matInput formControlName="name" placeholder="Product name">
+              <mat-error *ngIf="productForm.get('name')?.touched && productForm.get('name')?.hasError('required')">
+                Name is required
+              </mat-error>
+              <mat-error *ngIf="productForm.get('name')?.touched && productForm.get('name')?.hasError('minlength')">
+                Name must be at least 3 characters
+              </mat-error>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Description</mat-label>
+              <textarea matInput formControlName="description" rows="3" 
+                        placeholder="Product description"></textarea>
+              <mat-error *ngIf="productForm.get('description')?.touched && productForm.get('description')?.hasError('required')">
+                Description is required
+              </mat-error>
+            </mat-form-field>
+            
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Base Price ($)</mat-label>
+                <input matInput type="number" formControlName="basePrice" min="0" step="0.01">
+                <mat-error *ngIf="productForm.get('basePrice')?.touched && productForm.get('basePrice')?.hasError('required')">
+                  Base price is required
+                </mat-error>
+                <mat-error *ngIf="productForm.get('basePrice')?.touched && productForm.get('basePrice')?.hasError('min')">
+                  Base price must be 0 or higher
+                </mat-error>
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Preparation Time (minutes)</mat-label>
+                <input matInput type="number" formControlName="preparationTime" min="0">
+              </mat-form-field>
+            </div>
+            
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Category</mat-label>
+              <mat-select formControlName="categoryId">
+                <mat-option [value]="''">None</mat-option>
+                @for (category of categories(); track category._id) {
+                  <mat-option [value]="category._id">{{ category.name }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            
+            <div class="form-row toggle-options">
+              <mat-slide-toggle formControlName="isVegetarian" color="primary">
+                Vegetarian
+              </mat-slide-toggle>
+              
+              <mat-slide-toggle formControlName="isVegan" color="primary">
+                Vegan
+              </mat-slide-toggle>
+              
+              <mat-slide-toggle formControlName="isGlutenFree" color="primary">
+                Gluten Free
+              </mat-slide-toggle>
+            </div>
+            
+            @if (isEditMode()) {
+              <div class="form-row inline-toggle">
+                <mat-slide-toggle formControlName="isActive" color="primary">
+                  Active
+                </mat-slide-toggle>
+              </div>
+            }
+            
+            <mat-divider class="section-divider"></mat-divider>
+            
+            <!-- Nutritional Information -->
+            <h3>Nutritional Information</h3>
+            <div formGroupName="nutritionalInfo">
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Calories</mat-label>
+                  <input matInput type="number" formControlName="calories" min="0">
+                </mat-form-field>
+                
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Protein (g)</mat-label>
+                  <input matInput type="number" formControlName="protein" min="0" step="0.1">
+                </mat-form-field>
+              </div>
+              
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="third-width">
+                  <mat-label>Carbs (g)</mat-label>
+                  <input matInput type="number" formControlName="carbs" min="0" step="0.1">
+                </mat-form-field>
+                
+                <mat-form-field appearance="outline" class="third-width">
+                  <mat-label>Fat (g)</mat-label>
+                  <input matInput type="number" formControlName="fat" min="0" step="0.1">
+                </mat-form-field>
+                
+                <mat-form-field appearance="outline" class="third-width">
+                  <mat-label>Fiber (g)</mat-label>
+                  <input matInput type="number" formControlName="fiber" min="0" step="0.1">
+                </mat-form-field>
+              </div>
+            </div>
+            
+            <mat-divider class="section-divider"></mat-divider>
+            
+            <!-- Ingredients Section -->
+            <h3>Ingredients</h3>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Ingredients</mat-label>
+              <mat-chip-grid #chipGrid aria-label="Enter ingredients">
+                @for (ingredient of ingredientsArray.controls; track $index) {
+                  <mat-chip-row
+                    [value]="ingredient.value"
+                    (removed)="removeIngredient($index)">
+                    {{ingredient.value}}
+                    <button matChipRemove>
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip-row>
+                }
+              </mat-chip-grid>
+              <input placeholder="New ingredient..."
+                     [matChipInputFor]="chipGrid"
+                     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                     (matChipInputTokenEnd)="addIngredient($event)"/>
+            </mat-form-field>
+          </div>
+          
+          <!-- Right column - Images, Variants -->
+          <div class="form-column">
+            <h3>Product Images</h3>
+            
+            <!-- Main Image Upload Section -->
+            <div class="image-section">
+              <h4>Main Image</h4>
+              <div class="image-upload-container" 
+                   [class.invalid]="!mainImageUrl">
+                @if (mainImageUrl) {
+                  <div class="image-preview-container">
+                    <div class="image-preview-item">
+                      <img [src]="mainImageUrl" alt="Main image" class="image-preview">
+                      <button mat-icon-button color="warn" class="remove-image-btn" (click)="mainImageUrl = ''">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                } @else {
+                  <div class="upload-zone" 
+                       (click)="mainImageInput.click()" 
+                       (dragover)="onDragOver($event)"
+                       (drop)="onDrop($event, 'main')">
+                    <input #mainImageInput type="file" 
+                           accept="image/*" 
+                           (change)="onMainImageSelected($event)"
+                           style="display: none">
+                    
+                    @if (uploading()) {
+                      <div class="upload-progress">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <p>Uploading image...</p>
+                      </div>
+                    } @else {
+                      <mat-icon>cloud_upload</mat-icon>
+                      <p>Drag and drop an image or click to select</p>
+                      <small>Main product image (required)</small>
+                    }
+                  </div>
+                  
+                  <mat-error *ngIf="!mainImageUrl && isSubmitting()">
+                    Main image is required
+                  </mat-error>
+                }
+              </div>
+            </div>
+            
+            <!-- Thumbnail Image Upload Section -->
+            <div class="image-section">
+              <h4>Thumbnail Image (Optional)</h4>
+              <div class="image-upload-container">
+                @if (thumbnailUrl) {
+                  <div class="image-preview-container">
+                    <div class="image-preview-item">
+                      <img [src]="thumbnailUrl" alt="Thumbnail" class="image-preview">
+                      <button mat-icon-button color="warn" class="remove-image-btn" (click)="thumbnailUrl = ''">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                } @else {
+                  <div class="upload-zone" 
+                       (click)="thumbnailInput.click()" 
+                       (dragover)="onDragOver($event)"
+                       (drop)="onDrop($event, 'thumbnail')">
+                    <input #thumbnailInput type="file" 
+                           accept="image/*" 
+                           (change)="onThumbnailSelected($event)"
+                           style="display: none">
+                    
+                    @if (uploading()) {
+                      <div class="upload-progress">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <p>Uploading image...</p>
+                      </div>
+                    } @else {
+                      <mat-icon>cloud_upload</mat-icon>
+                      <p>Drag and drop an image or click to select</p>
+                      <small>Thumbnail for product listings</small>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+            
+            <mat-divider class="section-divider"></mat-divider>
+            
+            <!-- Variants Section -->
+            <h3>Variants <mat-icon matTooltip="Variants are different versions of the product (size, type, etc.)">help_outline</mat-icon></h3>
+            
+            <div formArrayName="variants">
+              @for (variant of variantsArray.controls; track $index) {
+                <div [formGroupName]="$index" class="variant-item">
+                  <mat-expansion-panel>
+                    <mat-expansion-panel-header>
+                      <mat-panel-title>
+                        {{ variant.get('name')?.value || 'New Variant' }}
+                      </mat-panel-title>
+                      <mat-panel-description>
+                        ${{ variant.get('price')?.value || 0 }}
+                        @if (variant.get('isDefault')?.value) {
+                          <span class="default-badge">Default</span>
+                        }
+                      </mat-panel-description>
+                    </mat-expansion-panel-header>
+                    
+                    <div class="variant-form">
+                      <div class="form-row">
+                        <mat-form-field appearance="outline" class="half-width">
+                          <mat-label>Name</mat-label>
+                          <input matInput formControlName="name" placeholder='e.g. Small (8"), Medium (12")>'>
+                          <mat-error *ngIf="variant.get('name')?.touched && variant.get('name')?.hasError('required')">
+                            Name is required
+                          </mat-error>
+                        </mat-form-field>
+                        
+                        <mat-form-field appearance="outline" class="half-width">
+                          <mat-label>Price ($)</mat-label>
+                          <input matInput type="number" formControlName="price" min="0" step="0.01">
+                          <mat-error *ngIf="variant.get('price')?.touched && variant.get('price')?.hasError('required')">
+                            Price is required
+                          </mat-error>
+                          <mat-error *ngIf="variant.get('price')?.touched && variant.get('price')?.hasError('min')">
+                            Price must be 0 or higher
+                          </mat-error>
+                        </mat-form-field>
+                      </div>
+                      
+                      <div class="form-row toggle-options">
+                        <mat-slide-toggle formControlName="isDefault" color="primary"
+                                       (change)="setAsDefaultVariant($index)">
+                          Default Variant
+                        </mat-slide-toggle>
+                      </div>
+                    </div>
+                    
+                    <mat-action-row>
+                      <button mat-button color="warn" type="button" (click)="removeVariant($index)">
+                        <mat-icon>delete</mat-icon> Remove
+                      </button>
+                    </mat-action-row>
+                  </mat-expansion-panel>
+                </div>
+              }
+              
+              <div class="add-item-container">
+                <button mat-stroked-button type="button" (click)="addVariant()" class="add-item-btn">
+                  <mat-icon>add</mat-icon> Add Variant
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button mat-button type="button" (click)="navigateBack()">
+            Cancel
+          </button>
+          <button mat-raised-button color="primary" type="submit" 
+                  [disabled]="productForm.invalid || isSubmitting() || uploading()">
+            {{ isEditMode() ? 'Update' : 'Create' }} Product
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
