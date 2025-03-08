@@ -1,63 +1,194 @@
 <div class="form-container">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>{{ isEditMode() ? 'Edit Add-on' : 'Create Add-on' }}</mat-card-title>
-        <div class="spacer"></div>
-        <button mat-button (click)="navigateBack()">
-          <mat-icon>arrow_back</mat-icon> Back to Add-ons
-        </button>
-      </mat-card-header>
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>{{ isEditMode() ? 'Edit Add-on' : 'Create Add-on' }}</mat-card-title>
+      <div class="spacer"></div>
+      <button mat-button (click)="navigateBack()">
+        <mat-icon>arrow_back</mat-icon> Back to Add-ons
+      </button>
+    </mat-card-header>
+    
+    <mat-card-content>
+      @if (isLoading()) {
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      }
       
-      <mat-card-content>
-        @if (isLoading()) {
-          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-        }
+      <form [formGroup]="addonForm" (ngSubmit)="onSubmit()">
+        <div class="form-layout">
+          <!-- Left column - Basic Info -->
+          <div class="form-column">
+            <h3>Basic Information</h3>
+            
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Name</mat-label>
+              <input matInput formControlName="name" placeholder="Add-on name">
+              <mat-error *ngIf="addonForm.get('name')?.touched && addonForm.get('name')?.hasError('required')">
+                Name is required
+              </mat-error>
+              <mat-error *ngIf="addonForm.get('name')?.touched && addonForm.get('name')?.hasError('minlength')">
+                Name must be at least 3 characters
+              </mat-error>
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Description</mat-label>
+              <textarea matInput formControlName="description" rows="3" 
+                        placeholder="Add-on description"></textarea>
+              <mat-error *ngIf="addonForm.get('description')?.touched && addonForm.get('description')?.hasError('required')">
+                Description is required
+              </mat-error>
+            </mat-form-field>
+            
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Price ($)</mat-label>
+                <input matInput type="number" formControlName="price" min="0" step="0.01">
+                <mat-error *ngIf="addonForm.get('price')?.touched && addonForm.get('price')?.hasError('required')">
+                  Price is required
+                </mat-error>
+                <mat-error *ngIf="addonForm.get('price')?.touched && addonForm.get('price')?.hasError('min')">
+                  Price must be 0 or higher
+                </mat-error>
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>Selection Type</mat-label>
+                <mat-select formControlName="selectionType">
+                  <mat-option value="single">Single (One choice only)</mat-option>
+                  <mat-option value="multiple">Multiple (Customer can choose multiple)</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+            
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Add-on Type</mat-label>
+              <mat-select formControlName="addonType">
+                <mat-option value="topping">Topping</mat-option>
+                <mat-option value="sauce">Sauce</mat-option>
+                <mat-option value="extra">Extra</mat-option>
+                <mat-option value="option">Option</mat-option>
+              </mat-select>
+            </mat-form-field>
+            
+            @if (isEditMode()) {
+              <div class="form-row inline-toggle">
+                <mat-slide-toggle formControlName="isActive" color="primary">
+                  Active
+                </mat-slide-toggle>
+              </div>
+            }
+            
+            <mat-divider class="section-divider"></mat-divider>
+            
+            <!-- Image Upload Section -->
+            <div class="image-section">
+              <h3>Add-on Image (Optional)</h3>
+              <div class="image-upload-container">
+                @if (imageUrl) {
+                  <div class="image-preview-container">
+                    <div class="image-preview-item">
+                      <img [src]="imageUrl" alt="Add-on image" class="image-preview">
+                      <button mat-icon-button color="warn" class="remove-image-btn" (click)="imageUrl = ''">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                } @else {
+                  <div class="upload-zone" 
+                       (click)="fileInput.click()" 
+                       (dragover)="onDragOver($event)"
+                       (drop)="onDrop($event)">
+                    <input #fileInput type="file" 
+                           accept="image/*" 
+                           (change)="onFileSelected($event)"
+                           style="display: none">
+                    
+                    @if (uploading()) {
+                      <div class="upload-progress">
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                        <p>Uploading image...</p>
+                      </div>
+                    } @else {
+                      <mat-icon>cloud_upload</mat-icon>
+                      <p>Drag and drop an image or click to select</p>
+                      <small>Add-on image (optional)</small>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+          
+          <!-- Right column - Products -->
+          <div class="form-column">
+            <h3>Applicable Products</h3>
+            
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Filter by Category</mat-label>
+              <mat-select formControlName="categoryId">
+                <mat-option value="all">All Categories</mat-option>
+                @for (category of categories(); track category._id) {
+                  <mat-option [value]="category._id">{{ category.name }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+            
+            <div class="product-selection">
+              <div class="products-header">
+                <span>Selected Products</span>
+                <div class="spacer"></div>
+              </div>
+              
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Add Products</mat-label>
+                <mat-chip-grid #chipGrid>
+                  @for (product of selectedProducts(); track product._id) {
+                    <mat-chip-row (removed)="removeProduct(product)">
+                      {{ product.name }}
+                      <button matChipRemove>
+                        <mat-icon>cancel</mat-icon>
+                      </button>
+                    </mat-chip-row>
+                  }
+                  <input placeholder="Search for products"
+                         #productInput
+                         [formControl]="productCtrl"
+                         [matChipInputFor]="chipGrid"
+                         [matAutocomplete]="auto">
+                </mat-chip-grid>
+                <mat-hint *ngIf="selectedProducts().length > 0">
+                  {{ selectedProducts().length }} product(s) selected
+                </mat-hint>
+                <mat-error *ngIf="addonForm.get('applicableProducts')?.touched && addonForm.get('applicableProducts')?.hasError('required') && selectedProducts().length === 0">
+                  At least one product must be selected
+                </mat-error>
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn"
+                                 (optionSelected)="selectProduct($event)">
+                  @for (product of filteredProductsObservable | async; track product._id) {
+                    <mat-option [value]="product">{{ product.name }}</mat-option>
+                  }
+                </mat-autocomplete>
+              </mat-form-field>
+              
+              @if (selectedProducts().length === 0 && !isLoading()) {
+                <div class="empty-products">
+                  <p>No products selected. Search and select products to which this add-on can be applied.</p>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
         
-        <form [formGroup]="addonForm" (ngSubmit)="onSubmit()">
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Name</mat-label>
-            <input matInput formControlName="name" placeholder="Add-on name">
-            <mat-error *ngIf="addonForm.get('name')?.touched && addonForm.get('name')?.hasError('required')">
-              Name is required
-            </mat-error>
-            <mat-error *ngIf="addonForm.get('name')?.touched && addonForm.get('name')?.hasError('minlength')">
-              Name must be at least 2 characters
-            </mat-error>
-          </mat-form-field>
-          
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Price ($)</mat-label>
-            <input matInput type="number" formControlName="price" min="0" step="0.01">
-            <mat-error *ngIf="addonForm.get('price')?.touched && addonForm.get('price')?.hasError('required')">
-              Price is required
-            </mat-error>
-            <mat-error *ngIf="addonForm.get('price')?.touched && addonForm.get('price')?.hasError('min')">
-              Price must be 0 or higher
-            </mat-error>
-          </mat-form-field>
-          
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Description</mat-label>
-            <textarea matInput formControlName="description" rows="3" 
-                      placeholder="Add-on description (optional)"></textarea>
-          </mat-form-field>
-          
-          <div class="form-row">
-            <mat-slide-toggle formControlName="isActive" color="primary">
-              Active
-            </mat-slide-toggle>
-          </div>
-          
-          <div class="form-actions">
-            <button mat-button type="button" (click)="navigateBack()">
-              Cancel
-            </button>
-            <button mat-raised-button color="primary" type="submit" 
-                    [disabled]="addonForm.invalid || isSubmitting()">
-              {{ isEditMode() ? 'Update' : 'Create' }} Add-on
-            </button>
-          </div>
-        </form>
-      </mat-card-content>
-    </mat-card>
-  </div>
+        <div class="form-actions">
+          <button mat-button type="button" (click)="navigateBack()">
+            Cancel
+          </button>
+          <button mat-raised-button color="primary" type="submit" 
+                  [disabled]="addonForm.invalid || isSubmitting() || uploading() || selectedProducts().length === 0">
+            {{ isEditMode() ? 'Update' : 'Create' }} Add-on
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

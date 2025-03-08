@@ -1,3 +1,4 @@
+// Update the app routes to include addon routes
 import { Routes } from '@angular/router';
 import { LayoutComponent } from './layout/layout.component';
 import { authGuard, nonAuthGuard } from './guard/auth.guard';
@@ -92,29 +93,29 @@ export const routes: Routes = [
           }
         ]
       },
-      // {
-      //   path: 'addons',
-      //   children: [
-      //     {
-      //       path: '',
-      //       loadComponent: () => import('./features/addons/addon-list/addon-list.component')
-      //         .then(m => m.AddonListComponent),
-      //       title: 'Add-ons'
-      //     },
-      //     {
-      //       path: 'create',
-      //       loadComponent: () => import('./features/addons/addon-form/addon-form.component')
-      //         .then(m => m.AddonFormComponent),
-      //       title: 'Create Add-on'
-      //     },
-      //     {
-      //       path: 'edit/:id',
-      //       loadComponent: () => import('./features/addons/addon-form/addon-form.component')
-      //         .then(m => m.AddonFormComponent),
-      //       title: 'Edit Add-on'
-      //     }
-      //   ]
-      // },
+      {
+        path: 'addons',
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./features/addons/addon-list/addon-list.component')
+              .then(m => m.AddonListComponent),
+            title: 'Add-ons'
+          },
+          {
+            path: 'create',
+            loadComponent: () => import('./features/addons/addon-form/addon-form.component')
+              .then(m => m.AddonFormComponent),
+            title: 'Create Add-on'
+          },
+          {
+            path: 'edit/:id',
+            loadComponent: () => import('./features/addons/addon-form/addon-form.component')
+              .then(m => m.AddonFormComponent),
+            title: 'Edit Add-on'
+          }
+        ]
+      },
       {
         path: 'orders',
         loadComponent: () => import('./features/orders/orders.component')
