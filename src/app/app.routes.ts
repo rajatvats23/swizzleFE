@@ -1,155 +1,302 @@
-// Update the app routes to include addon routes
+// src/app/app.routes.ts
 import { Routes } from '@angular/router';
-import { LayoutComponent } from './layout/layout.component';
-import { authGuard, nonAuthGuard } from './guard/auth.guard';
-import { AuthLandingComponent } from './features/auth/auth-landing.component';
+import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
+  // Auth routes
   {
     path: 'auth',
-    component: AuthLandingComponent,
-    canActivate: [nonAuthGuard],
+    loadComponent: () => import('./features/auth/auth-landing-component').then(m => m.AuthLandingComponent),
     children: [
+      {
+        path: 'login',
+        loadComponent: () => import('./features/auth/login.component').then(m => m.LoginComponent)
+      },
+      {
+        path: 'forgot-password',
+        loadComponent: () => import('./features/auth/forgot-password.component').then(m => m.ForgotPasswordComponent)
+      },
+      {
+        path: 'check-email',
+        loadComponent: () => import('./features/auth/check-email.component').then(m => m.CheckEmailComponent)
+      },
+      {
+        path: 'reset-password/:token',
+        loadComponent: () => import('./features/auth/reset-password.component').then(m => m.ResetPasswordComponent)
+      },
+      {
+        path: 'register/:token',
+        loadComponent: () => import('./features/auth/register.component').then(m => m.RegisterComponent)
+      },
+      {
+        path: 'mfa-verify',
+        loadComponent: () => import('./features/auth/mfa-verify.component').then(m => m.MfaVerifyComponent)
+      },
       {
         path: '',
         redirectTo: 'login',
         pathMatch: 'full'
-      },
-      {
-        path: 'login',
-        loadComponent: () => import('./features/auth/auth.component')
-          .then(m => m.LoginComponent),
-        title: 'Login'
-      },
-      {
-        path: 'forgot-password',
-        loadComponent: () => import('./features/auth/auth.component')
-          .then(m => m.ForgotPasswordComponent),
-        title: 'Forgot Password'
-      },
-      {
-        path: 'reset-password',
-        loadComponent: () => import('./features/auth/auth.component')
-          .then(m => m.ResetPasswordComponent),
-        title: 'Reset Password'
       }
     ]
   },
+
+  // Main layout - all authenticated routes will use this layout
   {
     path: '',
-    component: LayoutComponent,
+    loadComponent: () => import('./features/layout/layout.component').then(m => m.MainLayoutComponent),
     canActivate: [authGuard],
     children: [
-      {
-        path: '',
-        redirectTo: 'dashboard',
-        pathMatch: 'full'
-      },
+      // Dashboard route
       {
         path: 'dashboard',
-        loadComponent: () => import('./features/dashboard/dashboard.component')
-          .then(m => m.DashboardComponent),
-        title: 'Dashboard'
+        loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent)
       },
-      // Other routes remain the same
+
+      // Analytics route
       {
-        path: 'admins',
-        loadComponent: () => import('./features/admins/admins.component')
-          .then(m => m.AdminsComponent),
-        title: 'Admins'
+        path: 'analytics',
+        loadComponent: () => import('./features/analytics/analytics-dashboard.component').then(m => m.AnalyticsDashboardComponent),
+        canActivate: [() => roleGuard(['manager', 'admin', 'superadmin'])]
+      },
+
+      // Users route
+      {
+        path: 'users',
+        loadComponent: () => import('./features/users/users.component').then(m => m.UsersComponent)
+      },
+
+      // Restaurant routes
+      {
+        path: 'restaurants',
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./features/restaurants/restaurant-list.component').then(m => m.RestaurantListComponent),
+            canActivate: [() => roleGuard(['admin', 'superadmin'])]
+          },
+          {
+            path: ':id',
+            loadComponent: () => import('./features/restaurants/restaurant-details.component').then(m => m.RestaurantDetailComponent),
+            canActivate: [() => roleGuard(['admin', 'superadmin'])]
+          }
+        ]
       },
       {
-        path: 'category',
-        loadComponent: () => import('./features/category/category-list/category-list.component')
-          .then(m => m.CategoryListComponent),
-        title: 'Categories'
+        path: 'my-restaurant',
+        loadComponent: () => import('./features/restaurants/manager-restaurant.component').then(m => m.ManagerRestaurantComponent),
+        canActivate: [() => roleGuard(['manager'])]
       },
+
+      // Payment routes
       {
-        path: 'settings',
-        loadComponent: () => import('./features/settings/settings.component')
-          .then(m => m.SettingsComponent),
-        title: 'Settings'
+        path: 'payments',
+        children: [
+          {
+            path: 'reports',
+            loadComponent: () => import('./features/payments/payment-reports.component').then(m => m.PaymentReportsComponent),
+            canActivate: [() => roleGuard(['manager'])]
+          },
+          {
+            path: 'order/:orderId',
+            loadComponent: () => import('./features/payments/payment-list.component').then(m => m.PaymentListComponent),
+            canActivate: [() => roleGuard(['manager', 'staff'])]
+          }
+        ]
       },
+
+      // Reservation routes
+      {
+        path: 'reservations',
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./features/reservations/reservation-list.component').then(m => m.ReservationListComponent),
+            canActivate: [() => roleGuard(['manager', 'staff'])]
+          },
+          {
+            path: 'create',
+            loadComponent: () => import('./features/reservations/reservation-form.component').then(m => m.ReservationFormComponent),
+            canActivate: [() => roleGuard(['manager', 'staff'])]
+          },
+          {
+            path: 'edit/:id',
+            loadComponent: () => import('./features/reservations/reservation-form.component').then(m => m.ReservationFormComponent),
+            canActivate: [() => roleGuard(['manager', 'staff'])]
+          },
+          {
+            path: ':id',
+            loadComponent: () => import('./features/reservations/reservation-detail.component').then(m => m.ReservationDetailComponent),
+            canActivate: [() => roleGuard(['manager', 'staff'])]
+          }
+        ]
+      },
+
+      // Table routes
+      {
+        path: 'tables',
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./features/tables/table-list.component').then(m => m.TableListComponent),
+            canActivate: [() => roleGuard(['manager', 'staff'])]
+          },
+          {
+            path: 'create',
+            loadComponent: () => import('./features/tables/table-form.component').then(m => m.TableFormComponent),
+            canActivate: [() => roleGuard(['manager'])]
+          },
+          {
+            path: 'edit/:id',
+            loadComponent: () => import('./features/tables/table-form.component').then(m => m.TableFormComponent),
+            canActivate: [() => roleGuard(['manager'])]
+          },
+          {
+            path: ':id',
+            loadComponent: () => import('./features/tables/table-detail.component').then(m => m.TableDetailComponent),
+            canActivate: [() => roleGuard(['manager', 'staff'])]
+          }
+        ]
+      },
+      // Host View Reservation System
+      {
+        path: 'host',
+        loadComponent: () => import('./features/host-view/host-view.component').then(m => m.HostViewComponent),
+        canActivate: [() => roleGuard(['manager', 'staff'])]
+      },
+      // Kitchen Display System routes
+      {
+        path: 'kitchen',
+        loadComponent: () => import('./features/kds/kds-dashboard.component').then(m => m.KdsDashboardComponent),
+        canActivate: [() => roleGuard(['manager', 'staff'])]
+      },
+
+      // Menu routes
+      {
+        path: 'menus',
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./features/menus/menu-list.component').then(m => m.MenuListComponent)
+          },
+          {
+            path: 'create',
+            loadComponent: () => import('./features/menus/menu-form.component').then(m => m.MenuFormComponent),
+            canActivate: [() => roleGuard(['manager'])]
+          },
+          {
+            path: 'edit/:id',
+            loadComponent: () => import('./features/menus/menu-form.component').then(m => m.MenuFormComponent),
+            canActivate: [() => roleGuard(['manager'])]
+          },
+          {
+            path: ':id',
+            loadComponent: () => import('./features/menus/menu-details.component').then(m => m.MenuDetailComponent)
+          }
+        ]
+      },
+
+      // Category routes
+      {
+        path: 'categories',
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./features/category/category-list.component').then(m => m.CategoryListComponent)
+          },
+          {
+            path: 'create',
+            loadComponent: () => import('./features/category/category-form.component').then(m => m.CategoryFormComponent),
+            canActivate: [() => roleGuard(['manager'])]
+          },
+          {
+            path: 'edit/:id',
+            loadComponent: () => import('./features/category/category-form.component').then(m => m.CategoryFormComponent),
+            canActivate: [() => roleGuard(['manager', 'staff'])]
+          },
+          {
+            path: ':id',
+            loadComponent: () => import('./features/category/category-details.component').then(m => m.CategoryDetailComponent)
+          }
+        ]
+      },
+
+      // Tag routes
+      {
+        path: 'tags',
+        loadComponent: () => import('./features/tag/tag.component').then(m => m.TagListComponent)
+      },
+
+      // Product routes
       {
         path: 'products',
         children: [
           {
             path: '',
-            loadComponent: () => import('./features/products/product-list/product-list.component')
-              .then(m => m.ProductListComponent),
-            title: 'Products'
+            loadComponent: () => import('./features/products/product-list.component').then(m => m.ProductListComponent)
           },
           {
             path: 'create',
-            loadComponent: () => import('./features/products/product-details/product-form.component')
-              .then(m => m.ProductFormComponent),
-            title: 'Create Product'
+            loadComponent: () => import('./features/products/product-form.component').then(m => m.ProductFormComponent),
+            canActivate: [() => roleGuard(['manager'])]
           },
           {
             path: 'edit/:id',
-            loadComponent: () => import('./features/products/product-details/product-form.component')
-              .then(m => m.ProductFormComponent),
-            title: 'Edit Product'
+            loadComponent: () => import('./features/products/product-form.component').then(m => m.ProductFormComponent),
+            canActivate: [() => roleGuard(['manager'])]
+          },
+          {
+            path: ':id',
+            loadComponent: () => import('./features/products/product-details.component').then(m => m.ProductDetailComponent)
           }
         ]
       },
+
+      // Addon routes
       {
         path: 'addons',
         children: [
           {
             path: '',
-            loadComponent: () => import('./features/addons/addon-list/addon-list.component')
-              .then(m => m.AddonListComponent),
-            title: 'Add-ons'
+            loadComponent: () => import('./features/addons/addon-list.component').then(m => m.AddonListComponent),
+            canActivate: [() => roleGuard(['manager'])]
           },
           {
             path: 'create',
-            loadComponent: () => import('./features/addons/addon-form/addon-form.component')
-              .then(m => m.AddonFormComponent),
-            title: 'Create Add-on'
+            loadComponent: () => import('./features/addons/addon-form.component').then(m => m.AddonFormComponent),
+            canActivate: [() => roleGuard(['manager'])]
           },
           {
             path: 'edit/:id',
-            loadComponent: () => import('./features/addons/addon-form/addon-form.component')
-              .then(m => m.AddonFormComponent),
-            title: 'Edit Add-on'
+            loadComponent: () => import('./features/addons/addon-form.component').then(m => m.AddonFormComponent),
+            canActivate: [() => roleGuard(['manager'])]
+          },
+          {
+            path: ':id',
+            loadComponent: () => import('./features/addons/addon-details.component').then(m => m.AddonDetailComponent),
+            canActivate: [() => roleGuard(['manager'])]
           }
         ]
       },
+
+      // Default route redirects
       {
-        path: 'orders',
-        loadComponent: () => import('./features/orders/orders.component')
-          .then(m => m.OrdersComponent),
-        title: 'Orders'
-      },
-      {
-        path: 'fleet-management',
-        loadComponent: () => import('./features/fleet-management/fleet-management.component')
-          .then(m => m.FleetManagementComponent),
-        title: 'Fleet Management'
-      },
-      {
-        path: 'promocodes',
-        loadComponent: () => import('./features/promocodes/promocodes.component')
-          .then(m => m.PromocodesComponent),
-        title: 'Promocodes'
-      },
-      {
-        path: 'order-tracking',
-        loadComponent: () => import('./features/order-tracking/order-tracking.component')
-          .then(m => m.OrderTrackingComponent),
-        title: 'Order Tracking'
-      },
-      {
-        path: 'customers',
-        loadComponent: () => import('./features/customers/customers.component')
-          .then(m => m.CustomersComponent),
-        title: 'Customers'
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
       }
     ]
   },
+
+  // Public route for table QR code access
+  {
+    path: 'table/:qrCodeId',
+    loadComponent: () => import('./features/tables/customer-table-view.component').then(m => m.CustomerTableViewComponent)
+  },
+
+  // Fallback route
   {
     path: '**',
-    redirectTo: 'auth/login'
+    redirectTo: 'dashboard'
   }
 ];

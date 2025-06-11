@@ -1,55 +1,100 @@
-<div class="app-table-container">
-  <table mat-table [dataSource]="dataSource" class="app-table mat-elevation-z3" matSort
-    [matSortActive]="sorting().active" [matSortDirection]="sorting().direction" (matSortChange)="onSortChange($event)">
+<div class="generic-table-container">
+      <table class="generic-table">
+        <!-- Header Row -->
+        <thead>
+          <tr>
+            @for (column of columns(); track column.key) {
+              <th>
+                <div class="header-cell">
+                  <span class="header-text">{{ column.header }}</span>
+                  @if (column.sortable) {
+                    <button 
+                      class="sort-button"
+                      (click)="onSortClicked(column.key)">
+                      <mat-icon class="material-symbols-outlined" >{{ getSortIcon(column.key) }}</mat-icon>
+                    </button>
+                  }
+                  @if (column.filterable) {
+                    <button 
+                      class="filter-button"
+                      [matMenuTriggerFor]="filterMenu">
+                      <mat-icon class="material-symbols-outlined" >filter_list</mat-icon>
+                    </button>
+                    <mat-menu #filterMenu="matMenu" class="filter-menu">
+                      <div class="filter-container" (click)="$event.stopPropagation()">
+                        <mat-form-field appearance="outline" class="filter-input">
+                          <input matInput 
+                            placeholder="Filter value..." 
+                            [(ngModel)]="filterValues()[column.key]"
+                            (keyup.enter)="applyFilter(column.key)">
+                        </mat-form-field>
+                        <div class="filter-actions">
+                          <button mat-button (click)="clearFilter(column.key)">Clear</button>
+                          <button mat-raised-button 
+                            color="primary" 
+                            (click)="applyFilter(column.key)">Apply</button>
+                        </div>
+                      </div>
+                    </mat-menu>
+                  }
+                </div>
+              </th>
+            }
+            @if (showActions()) {
+              <th class="actions-column">Actions</th>
+            }
+          </tr>
+        </thead>
 
-    <!-- Dynamic columns except actions -->
-    @for (column of columnsWithoutActions(); track column) {
-    <ng-container [matColumnDef]="column">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> {{formatColumnHeader(column)}} </th>
-      <td mat-cell *matCellDef="let element" [class.truncated]="isLongContent(element[column])">
-        <span [matTooltip]="isLongContent(element[column]) ? element[column] : ''">
-          {{element[column]}}
-        </span>
-      </td>
-    </ng-container>
-    }
+        <!-- Table Body -->
+        <tbody>
+          @for (row of data(); track row[trackBy()]) {
+            <tr [class.alternate-row]="isAlternateRow($index)" (click)="onRowClick(row)">
+              @for (column of columns(); track column.key) {
+                <td>
+                  @if (column.render) {
+                    {{ column.render(row) }}
+                  } @else {
+                    {{ getPropertyValue(row, column.key) }}
+                  }
+                </td>
+              }
+              @if (showActions()) {
+                <td class="actions-column">
+                  <ng-container *ngTemplateOutlet="actionsTemplate(); context: { $implicit: row }"></ng-container>
+                </td>
+              }
+            </tr>
+          }
+          @if (data().length === 0) {
+            <tr class="empty-row">
+              <td [attr.colspan]="columns().length + (showActions() ? 1 : 0)">
+                {{ noDataMessage() }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
 
-    <!-- Actions Column -->
-    @if (hasActions()) {
-    <ng-container matColumnDef="actions">
-      <th mat-header-cell *matHeaderCellDef class="actions-header"> Actions </th>
-      <td mat-cell *matCellDef="let element" class="actions-cell">
-        <div class="actions-container">
-          <button mat-icon-button color="primary" (click)="edit.emit(element)" matTooltip="Edit item">
-            <mat-icon class="material-symbols-outlined">edit</mat-icon>
-          </button>
-          <button mat-icon-button color="warn" (click)="delete.emit(element)" matTooltip="Delete item">
-            <mat-icon class="material-symbols-outlined">delete</mat-icon>
-          </button>
+      <!-- Pagination -->
+      @if (showPagination()) {
+        <div class="pagination">
+          <div class="pagination-info">
+            Showing {{ getPaginationInfo() }}
+          </div>
+          <div class="pagination-controls">
+            <button mat-icon-button 
+              [disabled]="currentPage() === 0"
+              (click)="onPageChange(currentPage() - 1)">
+              <mat-icon class="material-symbols-outlined" >chevron_left</mat-icon>
+            </button>
+            <span class="pagination-page">{{ currentPage() + 1 }}</span>
+            <button mat-icon-button 
+              [disabled]="isLastPage()"
+              (click)="onPageChange(currentPage() + 1)">
+              <mat-icon class="material-symbols-outlined" >chevron_right</mat-icon>
+            </button>
+          </div>
         </div>
-      </td>
-    </ng-container>
-    }
-
-    <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="data-row"></tr>
-
-    <!-- Row shown when there is no matching data -->
-    @if (dataSource.length === 0) {
-    <tr class="mat-row no-data-row">
-      <td class="mat-cell no-data-cell" [attr.colspan]="displayedColumns.length">
-        <div class="no-data-container">
-          <mat-icon class="no-data-icon">info</mat-icon>
-          <span>No data available</span>
-        </div>
-      </td>
-    </tr>
-    }
-  </table>
-
-  <!-- Paginator -->
-  <mat-paginator [pageIndex]="pagination().pageIndex" [pageSize]="pagination().pageSize"
-    [pageSizeOptions]="pageSizeOptions" [length]="pagination().totalItems" (page)="onPageChange($event)"
-    aria-label="Select page">
-  </mat-paginator>
-</div>
+      }
+    </div>

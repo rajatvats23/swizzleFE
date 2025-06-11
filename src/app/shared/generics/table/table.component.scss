@@ -1,232 +1,102 @@
-@use '@angular/material' as mat;
-
-// Host styles and CSS variables (moved to the top to fix warnings)
-:host {
-  // Define CSS variables that our styles use
-  --mat-table-header-bg: #f5f5f5;
-  --mat-table-header-color: rgba(0, 0, 0, 0.87);
-  --mat-table-header-border: rgba(0, 0, 0, 0.12);
-  --mat-table-row-hover-bg: rgba(0, 0, 0, 0.04);
-  --mat-table-cell-color: rgba(0, 0, 0, 0.87);
-  --mat-table-cell-border: rgba(0, 0, 0, 0.12);
-  --mat-table-empty-color: rgba(0, 0, 0, 0.54);
-  
-  // Apply Material table overrides with valid tokens
-  @include mat.table-overrides((
-    background-color: white,
-    header-headline-color: rgba(0, 0, 0, 0.87),
-    row-item-label-text-color: rgba(0, 0, 0, 0.87),
-    row-item-outline-color: rgba(0, 0, 0, 0.12),
-    header-headline-weight: 600,
-    header-headline-size: 14px,
-    row-item-label-text-size: 14px
-  ));
-}
-
-// Theme variations
-:host.primary-theme {
-  --mat-table-header-bg: #e3f2fd;
-  --mat-table-header-color: #1565c0;
-  
-  @include mat.table-overrides((
-    background-color: white,
-    header-headline-color: #1565c0
-  ));
-}
-
-:host.accent-theme {
-  --mat-table-header-bg: #fce4ec;
-  --mat-table-header-color: #c2185b;
-  
-  @include mat.table-overrides((
-    background-color: white,
-    header-headline-color: #c2185b
-  ));
-}
-
-:host.dark-theme {
-  --mat-table-header-bg: #424242;
-  --mat-table-header-color: rgba(255, 255, 255, 0.87);
-  --mat-table-header-border: rgba(255, 255, 255, 0.12);
-  --mat-table-row-hover-bg: rgba(255, 255, 255, 0.08);
-  --mat-table-cell-color: rgba(255, 255, 255, 0.87);
-  --mat-table-cell-border: rgba(255, 255, 255, 0.12);
-  --mat-table-empty-color: rgba(255, 255, 255, 0.5);
-  
-  @include mat.table-overrides((
-    background-color: #303030,
-    header-headline-color: rgba(255, 255, 255, 0.87),
-    row-item-label-text-color: rgba(255, 255, 255, 0.87),
-    row-item-outline-color: rgba(255, 255, 255, 0.12)
-  ));
-}
-
-// Custom styles for the table
-.app-table-container {
-  position: relative;
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.app-table {
-  width: 100%;
-  table-layout: fixed;
-  min-width: 680px;
-  border-collapse: separate;
-  border-spacing: 0;
-  
-  // Header styles
-  .mat-mdc-header-row {
-
-    height: 56px;
-    background-color: var(--mat-table-header-bg, #009C4C);
-    color: white !important;
-  }
-  
-  .mat-mdc-header-cell {
-    font-weight: 200;
-    font-size: 14px;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    font-family: 'Josefin Sans', sans-serif;
-    border-bottom-width: 2px;
-    border-bottom-color: var(--mat-table-header-border, rgba(0, 0, 0, 0.12));
-    color: var(--mat-table-header-color, rgb(255, 255, 255));
-    padding: 0 16px;
-    position: sticky;
-    top: 0;
-    z-index: 2;
-  }
-  
-  // Data row styles
-  .data-row {
-    height: 52px;
-    transition: background-color 0.2s ease-in-out;
-  }
-  
-  .data-row:hover {
-    background-color: var(--mat-table-row-hover-bg, rgba(0, 0, 0, 0.04));
-  }
-  
-  // Cell styles
-  .mat-mdc-cell {
-    padding: 0 16px;
-    font-size: 14px;
-    max-width: 100%;
-    color: var(--mat-table-cell-color, rgba(0, 0, 0, 0.87));
-    border-bottom-color: var(--mat-table-cell-border, rgba(0, 0, 0, 0.12));
-    
-    .truncated {
-      white-space: nowrap;
+    .generic-table-container {
+      width: 100%;
+      background-color: #fff;
+      border-radius: 4px;
       overflow: hidden;
-      text-overflow: ellipsis;
-      display: block;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     }
-  }
-  
-  // No data row styling
-  .no-data-row {
-    height: 56px;
-  }
-  
-  .no-data-cell {
-    padding: 16px;
-  }
-  
-  .no-data-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    color: var(--mat-table-empty-color, rgba(0, 0, 0, 0.54));
-  }
-  
-  .no-data-icon {
-    font-size: 20px;
-    height: 20px;
-    width: 20px;
-  }
-  
-  // Actions column styles
-  .actions-header {
-    text-align: center;
-    width: 120px;
-  }
-  
-  .actions-cell {
-    width: 120px;
-    padding: 0 8px;
-  }
-  
-  .actions-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    
-    .mat-mdc-icon-button {
-      width: 36px;
-      height: 36px;
-      padding: 6px;
-      
-      .mat-icon {
-        font-size: 20px;
-        width: 20px;
-        height: 20px;
-        line-height: 20px;
-      }
+
+    .generic-table {
+      width: 100%;
+      border-collapse: collapse;
     }
-  }
-  
-  // Column-specific styling
-  .mat-column-name {
-    width: 20%;
-  }
-  
-  .mat-column-description {
-    width: 35%;
-  }
-  
-  .mat-column-createdAt, .mat-column-updatedAt {
-    width: 20%;
-  }
-}
 
-// Responsive behavior
-@media (max-width: 768px) {
-  .app-table-container {
-    border-radius: 0;
-    box-shadow: none;
-  }
-}
-
-
-.mat-sort-header-arrow {
-  color: white !important;
-}
-
-.mat-sort-header-content {
-  color: white !important;
-}
-
-.custom-progress-bar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 3;
-  
-  // Override Material progress bar colors
-  ::ng-deep {
-    .mdc-linear-progress__bar-inner {
-      border-color: #009C4C !important;
+    th {
+      text-align: left;
+      padding: 16px;
+      background-color: #009C4C;
+      color: white;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
     }
-    
-    .mdc-linear-progress__buffer-bar {
-      background-color: rgba(0, 156, 76, 0.2) !important;
+
+    .header-cell {
+      display: flex;
+      align-items: center;
     }
-  }
-}
+
+    .header-text {
+      flex: 1;
+    }
+
+    .sort-button, .filter-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      padding: 0;
+      margin-left: 4px;
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    tr:hover {
+      background-color: rgba(0, 156, 76, 0.04);
+    }
+
+    .alternate-row {
+      background-color: #FFF8EB;
+    }
+
+    .empty-row td {
+      text-align: center;
+      padding: 24px;
+      color: rgba(0, 0, 0, 0.54);
+    }
+
+    .actions-column {
+      width: 120px;
+      text-align: right;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 16px;
+      border-top: 1px solid rgba(0, 0, 0, 0.12);
+    }
+
+    .pagination-info {
+      color: rgba(0, 0, 0, 0.54);
+      font-size: 12px;
+    }
+
+    .pagination-controls {
+      display: flex;
+      align-items: center;
+    }
+
+    .pagination-page {
+      margin: 0 8px;
+    }
+
+    .filter-container {
+      padding: 16px;
+      width: auto;
+      min-width: 250px;
+    }
+
+    .filter-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
