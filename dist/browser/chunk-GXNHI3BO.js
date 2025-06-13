@@ -1,1 +1,0 @@
-import{pb as t}from"./chunk-K3BUIVDM.js";var o=class e{static \u0275fac=function(n){return new(n||e)};static \u0275cmp=t({type:e,selectors:[["app-admins"]],decls:0,vars:0,template:function(n,a){},encapsulation:2})};export{o as AdminsComponent};

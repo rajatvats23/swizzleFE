@@ -45,9 +45,14 @@ import { AuthService } from '../auth/auth.service';
         <ng-container matColumnDef="type">
           <th mat-header-cell *matHeaderCellDef>Selection Type</th>
           <td mat-cell *matCellDef="let addon">
-            <span class="selection-type">
-              {{addon.isMultiSelect ? 'Multiple Select' : 'Single Select'}}
-            </span>
+            <div class="selection-type-container">
+              <mat-icon class="material-symbols-outlined selection-icon" [class.multi-select]="addon.isMultiSelect">
+                {{addon.isMultiSelect ? 'check_box' : 'radio_button_checked'}}
+              </mat-icon>
+              <span class="selection-badge" [class.multi-select]="addon.isMultiSelect">
+                {{addon.isMultiSelect ? 'Multiple' : 'Single'}}
+              </span>
+            </div>
           </td>
         </ng-container>
 
@@ -93,20 +98,49 @@ import { AuthService } from '../auth/auth.service';
     .addon-container {
       width: 100%;
     }
+    
     .header-actions {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
     }
+    
     .addon-table {
       width: 100%;
     }
-    .selection-type {
-      padding: 4px 8px;
-      border-radius: 4px;
-      background-color: #f5f5f5;
+    
+    .selection-type-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .selection-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: #4caf50;
+      
+      &.multi-select {
+        color: #4caf50;
+      }
+    }
+    
+    .selection-badge {
+      padding: 4px 12px;
+      border-radius: 16px;
       font-size: 12px;
+      font-weight: 500;
+      background-color: #4caf50;
+      color: white;
+      border: 1px solid #FFF8EB;
+      
+      &.multi-select {
+        background-color:rgb(213, 162, 66);
+        color: white;
+        border-color: #FFF8EB;
+      }
     }
   `]
 })
