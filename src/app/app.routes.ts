@@ -282,7 +282,7 @@ export const routes: Routes = [
       // Default route redirects
       {
         path: '',
-        redirectTo: 'dashboard',
+        redirectTo: 'analytics',
         pathMatch: 'full'
       }
     ]
@@ -297,6 +297,6 @@ export const routes: Routes = [
   // Fallback route
   {
     path: '**',
-    redirectTo: 'dashboard'
+    redirectTo: 'analytics'
   }
 ];
