@@ -2,8 +2,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environment/environment';
 import { Table, TableCreateDto, TableUpdateDto, TableStatusUpdateDto } from './models/table.model';
+import { environment } from '../../../environments/environment';
 
 interface ApiResponse<T> {
   status: string;
@@ -25,7 +25,7 @@ export interface TableQueryParams {
 })
 export class TableService {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.API_URL}/tables`;
+  private baseUrl = `${environment.apiUrl}/tables`;
 
   /**
    * Get all tables with optional pagination, sorting and filtering
@@ -113,6 +113,6 @@ export class TableService {
    * Generate table QR code URL 
    */
   getTableQrCodeUrl(qrCodeIdentifier: string): string {
-    return `${environment.API_URL}/tables/qr/${qrCodeIdentifier}`;
+    return `${environment.apiUrl}/tables/qr/${qrCodeIdentifier}`;
   }
 }

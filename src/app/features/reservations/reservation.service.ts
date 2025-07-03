@@ -2,9 +2,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environment/environment';
 import { Reservation, ReservationCreateDto, ReservationUpdateDto, TableAssignmentDto, StatusUpdateDto } from './models/reservation.model';
 import { Table } from '../tables/models/table.model';
+import { environment } from '../../../environments/environment';
 
 interface ApiResponse<T> {
   status: string;
@@ -17,7 +17,7 @@ interface ApiResponse<T> {
 })
 export class ReservationService {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.API_URL}/reservations`;
+  private baseUrl = `${environment.apiUrl}/reservations`;
 
   getReservations(date?: string, status?: string): Observable<ApiResponse<{ reservations: Reservation[] }>> {
     let url = this.baseUrl;

@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
-import { environment } from "../../../environment/environment";
 import { Observable, tap } from "rxjs";
+import { environment } from "../../../environments/environment";
 
 export interface LoginCredentials {
   email: string;
@@ -64,7 +64,7 @@ export class AuthService {
   
   login(credentials: LoginCredentials): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(
-      `${environment.API_URL}/auth/login`, 
+      `${environment.apiUrl}/auth/login`, 
       credentials
     ).pipe(
       tap(response => {
@@ -92,16 +92,16 @@ export class AuthService {
   }
 
   forgotPassword(email: string): Observable<any> {
-    return this.http.post<any>(`${environment.API_URL}/auth/forgot-password`, { email });
+    return this.http.post<any>(`${environment.apiUrl}/auth/forgot-password`, { email });
   }
   
   resetPassword(token: string, password: string): Observable<any> {
-    return this.http.post<any>(`${environment.API_URL}/auth/reset-password/${token}`, { password });
+    return this.http.post<any>(`${environment.apiUrl}/auth/reset-password/${token}`, { password });
   }
 
   registerAdmin(token: string, userData: any): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(
-      `${environment.API_URL}/auth/register/${token}`, 
+      `${environment.apiUrl}/auth/register/${token}`, 
       userData
     ).pipe(
       tap(response => {
@@ -137,7 +137,7 @@ export class AuthService {
   
   // New MFA methods
   getMfaSetup(): Observable<MfaSetupResponse> {
-    return this.http.get<MfaSetupResponse>(`${environment.API_URL}/mfa/setup`);
+    return this.http.get<MfaSetupResponse>(`${environment.apiUrl}/mfa/setup`);
   }
 
   getCurrentUser(): User | null {
@@ -147,7 +147,7 @@ export class AuthService {
   
   verifyMfaSetup(code: string): Observable<MfaVerifyResponse> {
     return this.http.post<MfaVerifyResponse>(
-      `${environment.API_URL}/mfa/verify-setup`,
+      `${environment.apiUrl}/mfa/verify-setup`,
       { code }
     ).pipe(
       tap(response => {
@@ -175,7 +175,7 @@ export class AuthService {
     const tempUser = this.getTempUserInfo();
     
     return this.http.post<MfaVerifyResponse>(
-      `${environment.API_URL}/mfa/verify`,
+      `${environment.apiUrl}/mfa/verify`,
       { userId: tempUser?._id, code }
     ).pipe(
       tap(response => {

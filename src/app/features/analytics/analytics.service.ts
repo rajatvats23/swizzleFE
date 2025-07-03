@@ -2,7 +2,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environment/environment';
 import {
   ApiResponse,
   DashboardSummary,
@@ -16,13 +15,14 @@ import {
   CategoryAnalysis,
   PaymentMethodDistribution
 } from './models/analytics.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AnalyticsService {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.API_URL}/analytics`;
+  private baseUrl = `${environment.apiUrl}/analytics`;
 
   getDashboardSummary(): Observable<ApiResponse<{ summary: DashboardSummary }>> {
     return this.http.get<ApiResponse<{ summary: DashboardSummary }>>(`${this.baseUrl}/dashboard-summary`);

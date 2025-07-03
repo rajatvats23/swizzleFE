@@ -2,15 +2,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environment/environment';
-import { Payment, PaymentReport } from './models/payment.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PaymentService {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.API_URL}/payments`;
+  private baseUrl = `${environment.apiUrl}/payments`;
 
   // Record cash payment
   recordCashPayment(orderId: string): Observable<any> {

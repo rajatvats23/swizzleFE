@@ -2,8 +2,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environment/environment';
 import { User } from './users.component';
+import { environment } from '../../../environments/environment';
 
 interface ApiResponse<T> {
   status: string;
@@ -16,7 +16,7 @@ interface ApiResponse<T> {
 })
 export class UsersService {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.API_URL}/users`;
+  private baseUrl = `${environment.apiUrl}/users`;
 
   getUsers(): Observable<ApiResponse<{ users: User[] }>> {
     return this.http.get<ApiResponse<{ users: User[] }>>(this.baseUrl);
@@ -35,13 +35,13 @@ export class UsersService {
   }
 
   inviteAdmin(email: string): Observable<ApiResponse<null>> {
-    return this.http.post<ApiResponse<null>>(`${environment.API_URL}/auth/invite`, { email });
+    return this.http.post<ApiResponse<null>>(`${environment.apiUrl}/auth/invite`, { email });
   }
   
   // New method for MFA toggle
   toggleMfa(id: string, enabled: boolean): Observable<ApiResponse<null>> {
     return this.http.put<ApiResponse<null>>(
-      `${environment.API_URL}/mfa/toggle/${id}`, 
+      `${environment.apiUrl}/mfa/toggle/${id}`, 
       { enabled }
     );
   }

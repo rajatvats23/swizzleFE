@@ -2,7 +2,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environment/environment';
+import { environment } from '../../../environments/environment';
 
 export interface Menu {
   _id: string;
@@ -25,7 +25,7 @@ interface ApiResponse<T> {
 })
 export class MenuService {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.API_URL}/menus`;
+  private baseUrl = `${environment.apiUrl}/menus`;
 
   getMenus(): Observable<ApiResponse<{ menus: Menu[] }>> {
     return this.http.get<ApiResponse<{ menus: Menu[] }>>(this.baseUrl);

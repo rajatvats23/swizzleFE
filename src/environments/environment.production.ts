@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
   test: false,
-  apiUrl: 'https://api.example.com/api',
+  apiUrl: 'https://api.swizzle.co.in/api/',
   version: '1.0.0',
   defaultLanguage: 'en',
   enableDebugTools: false,

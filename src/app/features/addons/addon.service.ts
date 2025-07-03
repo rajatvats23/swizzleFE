@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environment/environment';
 import { Addon, AddonCreateDto, AddonUpdateDto } from './models/addon.model';
+import { environment } from '../../../environments/environment';
 
 interface ApiResponse<T> {
   status: string;
@@ -15,7 +15,7 @@ interface ApiResponse<T> {
 })
 export class AddonService {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.API_URL}/addons`;
+  private baseUrl = `${environment.apiUrl}/addons`;
 
   getAddons(): Observable<ApiResponse<{ addons: Addon[] }>> {
     return this.http.get<ApiResponse<{ addons: Addon[] }>>(this.baseUrl);

@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environment/environment';
 import { Product, ProductCreateDto, ProductUpdateDto } from './product.model';
+import { environment } from '../../../environments/environment';
 
 interface ApiResponse<T> {
   status: string;
@@ -15,7 +15,7 @@ interface ApiResponse<T> {
 })
 export class ProductService {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.API_URL}/products`;
+  private baseUrl = `${environment.apiUrl}/products`;
 
   getProducts(filters: {
     category?: string;

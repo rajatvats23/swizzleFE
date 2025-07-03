@@ -2,15 +2,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, BehaviorSubject, interval, switchMap, tap, catchError, of } from 'rxjs';
-import { environment } from '../../../environment/environment';
 import { ApiResponse, Order, OrderStatusUpdateDto, OrderItemStatusUpdateDto } from './models/kds.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class KitchenDisplayService {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.API_URL}/staff/orders`;
+  private baseUrl = `${environment.apiUrl}/staff/orders`;
   
   private activeOrdersSubject = new BehaviorSubject<Order[]>([]);
   activeOrders$ = this.activeOrdersSubject.asObservable();

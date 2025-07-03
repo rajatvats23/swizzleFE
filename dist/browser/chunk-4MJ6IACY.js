@@ -1,0 +1,1 @@
+var e={production:!0,test:!1,apiUrl:"https://api.swizzle.co.in/api/",version:"1.0.0",defaultLanguage:"en",enableDebugTools:!1,logLevel:"error",mockData:!1,analytics:{enabled:!0,trackingId:"UA-XXXXXXXX-X"}};export{e as a};

@@ -2,7 +2,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environment/environment';
+import { environment } from '../../../environments/environment';
 
 export interface Category {
   _id: string;
@@ -26,7 +26,7 @@ interface ApiResponse<T> {
 })
 export class CategoryService {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.API_URL}/categories`;
+  private baseUrl = `${environment.apiUrl}/categories`;
 
   getCategories(): Observable<ApiResponse<{ categories: Category[] }>> {
     return this.http.get<ApiResponse<{ categories: Category[] }>>(this.baseUrl);

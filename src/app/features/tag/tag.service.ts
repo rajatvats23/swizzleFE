@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../../environment/environment';
 import { Tag, TagCreateDto, TagUpdateDto } from '../products/product.model';
+import { environment } from '../../../environments/environment';
 
 interface ApiResponse<T> {
   status: string;
@@ -15,7 +15,7 @@ interface ApiResponse<T> {
 })
 export class TagService {
   private http = inject(HttpClient);
-  private baseUrl = `${environment.API_URL}/tags`;
+  private baseUrl = `${environment.apiUrl}/tags`;
 
   getTags(): Observable<ApiResponse<{ tags: Tag[] }>> {
     return this.http.get<ApiResponse<{ tags: Tag[] }>>(this.baseUrl);
