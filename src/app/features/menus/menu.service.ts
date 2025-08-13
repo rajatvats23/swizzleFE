@@ -31,6 +31,10 @@ export class MenuService {
     return this.http.get<ApiResponse<{ menus: Menu[] }>>(this.baseUrl);
   }
 
+  getCompleteMenuById(id: string): Observable<ApiResponse<any>> {
+    return this.http.get<ApiResponse<any>>(`${this.baseUrl}/${id}/complete`);
+  }
+
   getMenuById(id: string): Observable<ApiResponse<{ menu: Menu }>> {
     return this.http.get<ApiResponse<{ menu: Menu }>>(`${this.baseUrl}/${id}`);
   }

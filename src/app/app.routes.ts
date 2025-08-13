@@ -191,7 +191,7 @@ export const routes: Routes = [
           },
           {
             path: ':id',
-            loadComponent: () => import('./features/menus/menu-details.component').then(m => m.MenuDetailComponent)
+            loadComponent: () => import('./features/menus/menu-details/menu-details.component').then(m => m.MenuDetailComponent)
           }
         ]
       },

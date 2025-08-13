@@ -1,0 +1,189 @@
+<div class="container" *ngIf="menuData()">
+  <!-- Header -->
+  <div class="header-actions">
+    <span class="top-label">{{ menuData()?.menu?.name }}</span>
+    <div class="action-buttons">
+      <button mat-button color="primary" routerLink="/dashboard/menus">
+        <mat-icon class="material-symbols-outlined">arrow_back</mat-icon> Back to List
+      </button>
+      <button mat-raised-button color="accent" [routerLink]="['/dashboard/menus/edit', menuData()?.menu?._id]" *ngIf="canManageMenu()">
+        <mat-icon class="material-symbols-outlined">edit</mat-icon> Edit Menu
+      </button>
+      <button mat-raised-button color="warn" (click)="confirmDelete()" *ngIf="canManageMenu()">
+        <mat-icon class="material-symbols-outlined">delete</mat-icon> Delete
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <mat-tab-group class="menu-tabs">
+    <!-- Overview Tab -->
+    <mat-tab label="Overview">
+      <div class="tab-content">
+        <mat-card>
+          <mat-card-content>
+            <div class="info-section">
+              <h3>Menu Information</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">Description</span>
+                  <span class="value">{{ menuData()?.menu?.description || 'No description' }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="label">Restaurant</span>
+                  <span class="value">{{ menuData()?.menu?.restaurantId?.name || 'Unknown' }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="label">Created By</span>
+                  <span class="value">{{ menuData()?.menu?.createdBy?.firstName }} {{ menuData()?.menu?.createdBy?.lastName }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="label">Last Updated</span>
+                  <span class="value">{{ menuData()?.menu?.updatedAt | date:'medium' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <mat-divider></mat-divider>
+
+            <div class="stats-section">
+              <h3>Menu Statistics</h3>
+              <div class="stats-grid">
+                <div class="stat-card">
+                  <div class="stat-number">{{ menuData()?.categories?.length || 0 }}</div>
+                  <div class="stat-label">Categories</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-number">{{ menuData()?.products?.length || 0 }}</div>
+                  <div class="stat-label">Products</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-number">{{ menuData()?.addons?.length || 0 }}</div>
+                  <div class="stat-label">Add-ons</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-number">{{ getAveragePrice() | currency }}</div>
+                  <div class="stat-label">Avg Price</div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </mat-tab>
+
+    <!-- Categories & Products Tab -->
+    <mat-tab label="Categories & Products">
+      <div class="tab-content">
+        <mat-accordion>
+          @for (category of getSortedCategories(); track category._id) {
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  <div class="category-header">
+                    <span class="category-name">{{ category.name }}</span>
+                    <mat-chip class="product-count">{{ getProductsForCategory(category._id).length }} items</mat-chip>
+                  </div>
+                </mat-panel-title>
+                <mat-panel-description *ngIf="category.description">
+                  {{ category.description }}
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+
+              <div class="products-grid">
+                @for (product of getProductsForCategory(category._id); track product._id) {
+                  <div class="product-card" [class.unavailable]="!product.isAvailable">
+                    <div class="product-header">
+                      <h4 class="product-name">
+                        {{ product.name }}
+                        @if (!product.isAvailable) {
+                          <span class="unavailable-badge">Unavailable</span>
+                        }
+                      </h4>
+                      <span class="product-price">{{ product.price | currency }}</span>
+                    </div>
+                    <p class="product-description" *ngIf="product.description">{{ product.description }}</p>
+                    
+                    <div class="product-addons" *ngIf="product.addons.length > 0">
+                      <span class="addons-label">Available Add-ons:</span>
+                      <div class="addon-chips">
+                        @for (addonRef of product.addons; track addonRef.addon._id) {
+                          <mat-chip 
+                            [class.required-addon]="addonRef.required"
+                            [matTooltip]="addonRef.required ? 'Required' : 'Optional'">
+                            {{ getAddonName(addonRef) }}
+                            <mat-icon *ngIf="addonRef.required" class="required-icon material-symbols-outlined">star</mat-icon>
+                          </mat-chip>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                }
+                @if (getProductsForCategory(category._id).length === 0) {
+                  <div class="empty-state">
+                    <mat-icon class="material-symbols-outlined">restaurant_menu</mat-icon>
+                    <span>No products in this category</span>
+                  </div>
+                }
+              </div>
+            </mat-expansion-panel>
+          }
+          @if (getSortedCategories().length === 0) {
+            <div class="empty-state">
+              <mat-icon class="material-symbols-outlined">category</mat-icon>
+              <span>No categories found</span>
+            </div>
+          }
+        </mat-accordion>
+      </div>
+    </mat-tab>
+
+    <!-- Add-ons Tab -->
+    <mat-tab label="Add-ons">
+      <div class="tab-content">
+        <div class="addons-grid">
+          @for (addon of menuData()?.addons; track addon._id) {
+            <mat-card class="addon-card">
+              <mat-card-content>
+                <div class="addon-header">
+                  <h4 class="addon-name">{{ addon.name }}</h4>
+                  <mat-chip [class.multi-select]="addon.isMultiSelect">
+                    {{ addon.isMultiSelect ? 'Multi-select' : 'Single-select' }}
+                  </mat-chip>
+                </div>
+                
+                <div class="sub-addons" *ngIf="addon.subAddons.length > 0">
+                  <span class="sub-addons-label">Options:</span>
+                  <div class="sub-addon-list">
+                    @for (subAddon of addon.subAddons; track subAddon.name) {
+                      <div class="sub-addon-item">
+                        <span class="sub-addon-name">{{ subAddon.name }}</span>
+                        <span class="sub-addon-price">
+                          @if (subAddon.price === 0) {
+                            Free
+                          } @else {
+                            +{{ subAddon.price | currency }}
+                          }
+                        </span>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          }
+          @if (!menuData()?.addons || menuData()?.addons?.length === 0) {
+            <div class="empty-state">
+              <mat-icon class="material-symbols-outlined">add_circle</mat-icon>
+              <span>No add-ons configured</span>
+            </div>
+          }
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>
+
+<div class="loading-container" *ngIf="isLoading()">
+  <p>Loading menu details...</p>
+</div>
