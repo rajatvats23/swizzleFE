@@ -105,6 +105,7 @@ import { MatChipsModule } from '@angular/material/chips';
     }
     .category-table {
       width: 100%;
+      border-radius: 10px !important;
     }
     .menu-chips {
       max-width: 300px;

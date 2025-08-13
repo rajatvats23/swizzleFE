@@ -48,10 +48,10 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       // Dashboard route
-      {
-        path: 'dashboard',
-        loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent)
-      },
+      // {
+      //   path: 'dashboard',
+      //   loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent)
+      // },
 
       // Analytics route
       {
@@ -177,7 +177,7 @@ export const routes: Routes = [
         children: [
           {
             path: '',
-            loadComponent: () => import('./features/menus/menu-list.component').then(m => m.MenuListComponent)
+            loadComponent: () => import('./features/menus/menu-list/menu-list.component').then(m => m.MenuListComponent)
           },
           {
             path: 'create',
@@ -282,7 +282,7 @@ export const routes: Routes = [
       // Default route redirects
       {
         path: '',
-        redirectTo: 'analytics',
+        redirectTo: 'dashboard',
         pathMatch: 'full'
       }
     ]
@@ -297,6 +297,6 @@ export const routes: Routes = [
   // Fallback route
   {
     path: '**',
-    redirectTo: 'analytics'
+    redirectTo: 'dashboard'
   }
 ];

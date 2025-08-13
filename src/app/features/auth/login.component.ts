@@ -133,7 +133,7 @@ export class LoginComponent {
             });
           } else {
             // No MFA required, proceed to dashboard
-            this.router.navigate(['/dashboard']);
+            this.router.navigate(['/analytics']);
           }
         },
         error: (error) => {
