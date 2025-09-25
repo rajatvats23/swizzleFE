@@ -98,6 +98,11 @@ export const routes: Routes = [
             canActivate: [() => roleGuard(['manager'])]
           },
           {
+            path: 'checkout',
+            loadComponent: () => import('./features/checkout/checkout.component').then(m => m.PosCheckoutComponent),
+            canActivate: [() => roleGuard(['manager'])]
+          },
+          {
             path: 'order/:orderId',
             loadComponent: () => import('./features/payments/payment-list.component').then(m => m.PaymentListComponent),
             canActivate: [() => roleGuard(['manager', 'staff'])]

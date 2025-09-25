@@ -96,6 +96,12 @@ export const navigationConfig = {
       icon: 'payments', 
       route: '/payments/reports',
       roles: ['manager'] // Only visible to restaurant managers
+    },
+    { 
+      label: 'Checkout', 
+      icon: 'shopping_checkout_cart', 
+      route: '/payments/checkout',
+      roles: ['manager', 'staff'] // Only visible to restaurant managers and staff
     }
   ]
 };

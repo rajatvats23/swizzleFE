@@ -1,0 +1,271 @@
+<div class="checkout-container">
+  <!-- Header -->
+  <header class="checkout-header">
+    <div class="pos-title">
+      <div class="pos-logo">
+        <mat-icon class="material-symbols-outlined">point_of_sale</mat-icon>
+      </div>
+      <h1>Checkout & Payment</h1>
+    </div>
+    @if (order) {
+      <div class="header-info">
+        <div class="order-info">
+          <div class="order-number">Order #{{order.orderNumber}}</div>
+          <div class="table-number">Table {{order.table.tableNumber}}</div>
+        </div>
+        <div class="order-time">
+          <mat-icon class="material-symbols-outlined">schedule</mat-icon>
+          <span>{{getCurrentTime()}}</span>
+        </div>
+      </div>
+    }
+  </header>
+
+  <!-- Loading State -->
+  @if (isLoading) {
+    <div class="loading-container">
+      <mat-spinner diameter="60"></mat-spinner>
+      <p>Loading order details...</p>
+    </div>
+  }
+
+  <!-- Main Content -->
+  @if (!isLoading && order) {
+    <!-- Order Summary -->
+    <div class="order-summary">
+      <div class="summary-header">
+        <h2 class="summary-title">Order Summary</h2>
+      </div>
+      
+      <div class="order-items">
+        @for (item of order.items; track item._id) {
+          <div class="order-item">
+            <div class="item-details">
+              <div class="item-name">{{item.product.name}}</div>
+              @if (item.selectedAddons?.length || item.specialInstructions) {
+                <div class="item-addons">
+                  @for (addon of item.selectedAddons; track addon.addon._id; let last = $last) {
+                    <span>{{addon.subAddon.name}}@if (!last) { • }</span>
+                  }
+                  @if (item.selectedAddons?.length && item.specialInstructions) { • }
+                  @if (item.specialInstructions) {
+                    <span>{{item.specialInstructions}}</span>
+                  }
+                </div>
+              }
+            </div>
+            <div class="item-quantity-price">
+              <span class="quantity-badge">{{item.quantity}}×</span>
+              <span class="item-price">₹{{(item.price * item.quantity).toFixed(2)}}</span>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="order-totals">
+        <div class="total-row">
+          <span>Subtotal</span>
+          <span>₹{{order.subtotal.toFixed(2)}}</span>
+        </div>
+        <div class="total-row">
+          <span>GST (18%)</span>
+          <span>₹{{order.tax.toFixed(2)}}</span>
+        </div>
+        <div class="total-row">
+          <span>Service Charge (10%)</span>
+          <span>₹{{order.serviceCharge.toFixed(2)}}</span>
+        </div>
+        <div class="total-row final">
+          <span>Total Amount</span>
+          <span>₹{{order.totalAmount.toFixed(2)}}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Panel -->
+    <div class="payment-panel">
+      <div class="payment-header">
+        <h2 class="payment-title">Select Payment Method</h2>
+        <p class="payment-subtitle">Choose how you'd like to pay for this order</p>
+      </div>
+
+      <form [formGroup]="paymentForm" class="payment-methods">
+        <!-- Cash Payment -->
+        <div class="payment-option" 
+             [class.active]="selectedPaymentMethod() === 'cash'"
+             (click)="selectPaymentMethod('cash')">
+          <div class="option-header">
+            <div class="option-info">
+              <div class="option-icon cash">
+                <mat-icon class="material-symbols-outlined">payments</mat-icon>
+              </div>
+              <div class="option-details">
+                <h3>Cash Payment</h3>
+                <p>Pay with cash at the counter</p>
+              </div>
+            </div>
+            <div class="option-radio" [class.checked]="selectedPaymentMethod() === 'cash'"></div>
+          </div>
+        </div>
+
+        <!-- Card Payment -->
+        <div class="payment-option" 
+             [class.active]="selectedPaymentMethod() === 'card'"
+             (click)="selectPaymentMethod('card')">
+          <div class="option-header">
+            <div class="option-info">
+              <div class="option-icon card">
+                <mat-icon class="material-symbols-outlined">credit_card</mat-icon>
+              </div>
+              <div class="option-details">
+                <h3>Card Payment</h3>
+                <p>Debit/Credit card via Stripe</p>
+              </div>
+            </div>
+            <div class="option-radio" [class.checked]="selectedPaymentMethod() === 'card'"></div>
+          </div>
+          @if (selectedPaymentMethod() === 'card') {
+            <div class="payment-form active">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Card Number</mat-label>
+                <input matInput formControlName="cardNumber" placeholder="1234 5678 9012 3456" 
+                       (input)="formatCardNumber($event)" maxlength="19">
+                <mat-icon matSuffix class="material-symbols-outlined">credit_card</mat-icon>
+              </mat-form-field>
+              
+              <div class="form-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>Expiry</mat-label>
+                  <input matInput formControlName="cardExpiry" placeholder="MM/YY" 
+                         (input)="formatExpiry($event)" maxlength="5">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>CVV</mat-label>
+                  <input matInput formControlName="cardCvv" placeholder="123" maxlength="4" type="password">
+                </mat-form-field>
+              </div>
+              
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Cardholder Name</mat-label>
+                <input matInput formControlName="cardholderName" placeholder="John Doe">
+              </mat-form-field>
+            </div>
+          }
+        </div>
+
+        <!-- UPI Payment -->
+        <div class="payment-option" 
+             [class.active]="selectedPaymentMethod() === 'upi'"
+             (click)="selectPaymentMethod('upi')">
+          <div class="option-header">
+            <div class="option-info">
+              <div class="option-icon upi">
+                <mat-icon class="material-symbols-outlined">qr_code</mat-icon>
+              </div>
+              <div class="option-details">
+                <h3>UPI Payment</h3>
+                <p>Pay using UPI apps like GPay, PhonePe</p>
+              </div>
+            </div>
+            <div class="option-radio" [class.checked]="selectedPaymentMethod() === 'upi'"></div>
+          </div>
+          @if (selectedPaymentMethod() === 'upi') {
+            <div class="payment-form active">
+              <div class="qr-display">
+                <div class="qr-amount">₹{{order.totalAmount.toFixed(2)}}</div>
+                <div class="qr-code">
+                  <div class="qr-placeholder">
+                    <mat-icon class="material-symbols-outlined">qr_code</mat-icon>
+                    <p>QR Code</p>
+                  </div>
+                </div>
+                <div class="qr-instructions">
+                  Scan this QR code with any UPI app to pay<br>
+                  <strong>Payment expires in <span class="timer">{{qrTimer()}}</span></strong>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Digital Wallet -->
+        <div class="payment-option" 
+             [class.active]="selectedPaymentMethod() === 'wallet'"
+             (click)="selectPaymentMethod('wallet')">
+          <div class="option-header">
+            <div class="option-info">
+              <div class="option-icon wallet">
+                <mat-icon class="material-symbols-outlined">account_balance_wallet</mat-icon>
+              </div>
+              <div class="option-details">
+                <h3>Digital Wallet</h3>
+                <p>Paytm, Amazon Pay, other wallets</p>
+              </div>
+            </div>
+            <div class="option-radio" [class.checked]="selectedPaymentMethod() === 'wallet'"></div>
+          </div>
+          @if (selectedPaymentMethod() === 'wallet') {
+            <div class="payment-form active">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Wallet Type</mat-label>
+                <mat-select formControlName="walletType">
+                  <mat-option value="">Select wallet...</mat-option>
+                  <mat-option value="paytm">Paytm</mat-option>
+                  <mat-option value="amazonpay">Amazon Pay</mat-option>
+                  <mat-option value="mobikwik">Mobikwik</mat-option>
+                  <mat-option value="phonepe">PhonePe Wallet</mat-option>
+                </mat-select>
+              </mat-form-field>
+              
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Mobile Number</mat-label>
+                <input matInput formControlName="walletMobile" placeholder="Enter mobile number" 
+                       pattern="[0-9]{10}" maxlength="10">
+                <mat-icon matSuffix class="material-symbols-outlined">phone</mat-icon>
+              </mat-form-field>
+            </div>
+          }
+        </div>
+      </form>
+
+      <div class="action-section">
+        <!-- Status Messages -->
+        @if (paymentStatus) {
+          <div class="status-message" [ngClass]="'status-' + paymentStatus.type">
+            <mat-icon class="material-symbols-outlined">
+              {{getStatusIcon(paymentStatus.type)}}
+            </mat-icon>
+            {{paymentStatus.message}}
+          </div>
+        }
+
+        <!-- Processing Indicator -->
+        @if (isProcessing) {
+          <div class="processing">
+            <mat-spinner diameter="24"></mat-spinner>
+            <span>Processing payment...</span>
+          </div>
+        }
+
+        <!-- Action Buttons -->
+        <button mat-raised-button color="primary" class="primary-button"
+                [disabled]="!selectedPaymentMethod() || isProcessing"
+                (click)="processPayment()">
+          <mat-icon class="material-symbols-outlined">payment</mat-icon>
+          Process Payment - ₹{{order.totalAmount.toFixed(2)}}
+        </button>
+        
+        <div class="button-row">
+          <button mat-stroked-button color="primary" class="secondary-button" (click)="printBill()">
+            <mat-icon class="material-symbols-outlined">print</mat-icon>
+            Print Bill
+          </button>
+          <button mat-stroked-button color="primary" class="secondary-button" (click)="splitBill()">
+            <mat-icon class="material-symbols-outlined">call_split</mat-icon>
+            Split Bill
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

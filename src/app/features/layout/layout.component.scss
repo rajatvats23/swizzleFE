@@ -1,10 +1,8 @@
-/* src/app/features/layout/layout.component.scss */
-
 // Variables
 $primary-color: #009c4c;
 $text-dark: #232325;
 $text-light: #ffffff;
-$bg-light: #f1f1f1;
+$bg-light: #FFF8EB;
 $shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
 $shadow-md: 0 -2px 8px rgba(0, 0, 0, 0.1);
 $shadow-drawer: 4px 0 4px 0 rgba(0, 0, 0, 0.15);
@@ -14,6 +12,9 @@ $border-light: 0.5px solid rgba(0, 0, 0, 0.1);
 .layout-container {
   height: 100vh;
   background-color: $bg-light;
+  // Add the same dotted background as KDS
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23fff8eb"/><circle cx="10" cy="10" r="2" fill="%23009c4c" opacity="0.2"/><circle cx="50" cy="10" r="2" fill="%23009c4c" opacity="0.2"/><circle cx="90" cy="10" r="2" fill="%23009c4c" opacity="0.2"/><circle cx="10" cy="50" r="2" fill="%23009c4c" opacity="0.2"/><circle cx="50" cy="50" r="2" fill="%23009c4c" opacity="0.2"/><circle cx="90" cy="50" r="2" fill="%23009c4c" opacity="0.2"/><circle cx="10" cy="90" r="2" fill="%23009c4c" opacity="0.2"/><circle cx="50" cy="90" r="2" fill="%23009c4c" opacity="0.2"/><circle cx="90" cy="90" r="2" fill="%23009c4c" opacity="0.2"/></svg>');
+  background-attachment: fixed;
 }
 
 .spacer {
@@ -36,14 +37,6 @@ $border-light: 0.5px solid rgba(0, 0, 0, 0.1);
     color: $text-light;
     font-size: 26px;
   }
-
-  // &-expanded {
-  //   width: 215px;
-  // }
-
-  // &-collapsed {
-  //   width: 72px;
-  // }
 }
 
 ::ng-deep .mat-drawer-inner-container::-webkit-scrollbar {
@@ -145,7 +138,7 @@ mat-nav-list {
 
 // Content
 .drawer-content {
-  background-color: $bg-light;
+  background-color: transparent !important; // Make transparent to show parent background
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -155,7 +148,7 @@ mat-nav-list {
   flex: 1;
   overflow-y: auto;
   padding: 24px;
-  background-color: white;
+  background-color: transparent; // Remove white background to show dotted pattern
 }
 
 // Bottom Navigation
@@ -227,14 +220,12 @@ mat-nav-list {
   }
 }
 
-
 .icon-center {
   display: flex;
   justify-content: center;
   width: 100%;
 }
 
-// Add to src/app/features/layout/layout.component.scss
 .user-name {
   margin-left: 8px;
   font-size: 14px;
